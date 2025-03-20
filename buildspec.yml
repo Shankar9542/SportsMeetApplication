@@ -1,12 +1,16 @@
-version: 0.2  # ✅ Correct version
+version: 0.2
 
 phases:
   install:
     runtime-versions:
-      python: 3.11  # ✅ Set Python version (no need for pyenv manually)
+      python: 3.11
 
   pre_build:
     commands:
+      - echo "Updating system packages..."
+      - apt update && apt upgrade -y  # Ubuntu uses apt
+      - echo "Installing PostgreSQL development packages..."
+      - apt install -y libpq-dev  # Ubuntu package for PostgreSQL headers
       - echo "Checking if Python 3.11 is already installed..."
       - if ! pyenv versions | grep -q '3.11'; then pyenv install 3.11; fi
       - pyenv global 3.11
@@ -14,7 +18,8 @@ phases:
 
   build:
     commands:
-      - echo "Building the application..."
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt  # Install all project dependencies
 
   post_build:
     commands:
@@ -22,4 +27,4 @@ phases:
 
 artifacts:
   files:
-    - '**/*'  # ✅ Matches all files
+    - '**/*'

@@ -3,19 +3,18 @@ version: 0.2  # ✅ Correct version
 phases:
   install:
     runtime-versions:
-      python: 3.8  # ✅ Set Python version (change as needed)
-  
-  pre_build:
-  commands:
-    - pyenv install 3.11
-    - pyenv global 3.11
-    - python -m pip install --upgrade pip
+      python: 3.8  # ✅ Set Python version (change if needed)
 
+  pre_build:
+    commands:
+      - pyenv install 3.11
+      - pyenv global 3.11
+      - python -m pip install --upgrade pip
 
   build:
     commands:
       - echo "Building the application..."
-  
+
   post_build:
     commands:
       - echo "Build completed on $(date)"

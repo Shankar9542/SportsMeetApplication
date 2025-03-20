@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files: 
   - source: /
-    destination: /home/ubuntu/sportsapplication
+    destination: /home/ubuntu/SPORTSAPPLICATION
 permissions:
-  - object: /home/ubuntu/sportsapplication
+  - object: /home/ubuntu/SPORTSAPPLICATION
     owner: ubuntu
     group: ubuntu
 hooks:

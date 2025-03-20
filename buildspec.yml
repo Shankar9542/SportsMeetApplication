@@ -3,11 +3,12 @@ version: 0.2  # ✅ Correct version
 phases:
   install:
     runtime-versions:
-      python: 3.8  # ✅ Set Python version (change if needed)
+      python: 3.11  # ✅ Set Python version (no need for pyenv manually)
 
   pre_build:
     commands:
-      - pyenv install 3.11
+      - echo "Checking if Python 3.11 is already installed..."
+      - if ! pyenv versions | grep -q '3.11'; then pyenv install 3.11; fi
       - pyenv global 3.11
       - python -m pip install --upgrade pip
 

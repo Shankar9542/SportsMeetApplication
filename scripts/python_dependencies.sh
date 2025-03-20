@@ -28,11 +28,11 @@ echo "Upgrading pip in virtual environment..."
 pip install --upgrade pip
 
 # Install dependencies from requirements.txt
-if [ -f "/home/ubuntu/requirements.txt" ]; then
-    echo "Installing dependencies from /home/ubuntu/requirements.txt..."
-    pip install -r /home/ubuntu/requirements.txt
+if [ -f "/home/ubuntu/SPORTSAPPLICATION/requirements.txt" ]; then
+    echo "Installing dependencies from /home/ubuntu/SPORTSAPPLICATION/requirements.txt..."
+    pip install -r /home/ubuntu/SPORTSAPPLICATION/requirements.txt
 else
-    echo "Error: requirements.txt not found in /home/ubuntu/"
+    echo "Error: requirements.txt not found in /home/ubuntu/SPORTSAPPLICATION"
     exit 1
 fi
 

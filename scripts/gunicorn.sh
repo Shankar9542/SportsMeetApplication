@@ -1,11 +1,7 @@
 #!/bin/bash
 echo "Starting Gunicorn..."
 
-# Change to your project directory
-cd /home/ubuntu/SPORTSAPPLICATION || exit
+cd /home/ubuntu/SPORTSAPPLICATION || exit  
+source /home/ubuntu/env/bin/activate  
 
-# Activate virtual environment
-source /home/ubuntu/env/bin/activate
-
-# Run Gunicorn with Django's WSGI module
-exec gunicorn --workers 3 --bind 0.0.0.0:8000 SportMeet.wsgi:application
+exec gunicorn --chdir /home/ubuntu/SPORTSAPPLICATION --workers 3 --bind 0.0.0.0:8000 SportMeet.wsgi:application --log-file - 2>&1

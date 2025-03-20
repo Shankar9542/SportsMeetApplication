@@ -22,6 +22,9 @@ hooks:
       - location: scripts/gunicorn.sh
         timeout: 300
         runas: ubuntu
+      - location: scripts/restart_gunicorn.sh
+        timeout: 60
+        runas: ubuntu
       - location: scripts/nginx.sh
         timeout: 300
         runas: ubuntu

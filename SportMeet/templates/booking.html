@@ -1,0 +1,966 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking - {{ venue.name }}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}"/>
+    <!-- Swiper.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+	<!-- Main Stylesheets -->
+    <style>
+        .rating i {
+            font-size: 9px; /* Adjust the size as needed */
+            
+        }
+
+        h5, h5 {
+            font-size: medium;
+        }
+
+            {% comment %} body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f4f4f4;
+                color: #333;
+            } {% endcomment %}
+    
+            h2 {
+                text-align: center;
+                color: #444;
+                margin-bottom: 20px;
+            }
+    
+            .form-container {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 15px;
+                padding: 15px;
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                background-color:darkturquoise;
+            }
+    
+            .form-container label {
+                font-weight: bold;
+                margin-right: 5px;
+            }
+    
+            .form-container input, 
+            .form-container select {
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+    
+            .price-display {
+                margin-left: auto;
+                font-weight: bold;
+                font-size: 1.1em;
+            }
+    
+            .booking-table-container {
+                max-height: 600px;
+                overflow-x: auto;
+                overflow-y: auto;
+                border: 1px solid #ccc;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-top: 10px;
+            }
+    
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 1000px;
+            }
+    
+            th, td {
+                border: 1px solid #ddd;
+                text-align: center;
+                padding: 8px;
+                min-width: 86px;
+                font-size: 14px;
+            }
+    
+            th {
+                background-color: #f8f8f8;
+                font-weight: bold;
+            }
+    
+            .booked {
+                background-color:rgb(164, 156, 156);
+                border: 2px solid rgb(135, 135, 135);
+                color: white;
+            }
+    
+            .available {
+                border: 2px solid #4ce486;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+    
+            .available:hover {
+                background-color: #39c272;
+            }
+    
+            .selected {
+                background-color: #39c272;
+            }
+    
+            .time-slot-cell {
+                cursor: pointer;
+            }
+    
+            button {
+                padding: 10px 15px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.2s;
+                margin-top: 15px;
+            }
+    
+            button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+    
+            button:hover:enabled {
+                background-color: #0056b3;
+            }
+    
+            #cartModal {
+                display: none;
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translate(-50%, 0);
+                background: white;
+                border: 1px solid #ddd;
+                padding: 25px;
+                z-index: 1000;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                max-width: 90%;
+                width: 400px;
+            }
+    
+            #cartModal h3 {
+                margin-top: 0;
+                font-size: 18px;
+                margin-bottom: 15px;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 5px;
+            }
+    
+            #cartModal p {
+                margin: 5px 0;
+                font-size: 14px;
+            }
+    
+            #modalOverlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+    
+            /* Flex layout for modal buttons */
+            #cartModal button {
+                background-color: #28a745;
+                margin-right: 10px;
+            }
+    
+            #cartModal button:last-child {
+                background-color: #dc3545;
+            }
+    
+            #cartModal button:hover {
+                opacity: 0.9;
+            }
+    
+            @media (max-width: 768px) {
+                .form-container {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .price-display {
+                    margin-top: 10px;
+                }
+            }
+
+            .legend {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+     
+            .legend div {
+                margin: 0 10px;
+                display: flex;
+                align-items: center;
+            }
+     
+            .box {
+                width: 20px;
+                height: 20px;
+                margin-right: 5px;
+                border: 1px solid #ccc;
+            }
+     
+            .available-box {
+                {% comment %} background-color: #4ce486; {% endcomment %}
+                border: 1px solid #4ce486;
+            }
+
+            .selectedbooking-box {
+                background-color: #4ce486;
+
+            }
+     
+            .booked-box {
+                background-color:rgb(164, 156, 156);
+            }
+    </style>
+
+</head>
+<body>
+     <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand meet" href="{% url 'SportMeetApp:home'%}">SportMeet</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="d-flex justify-content-between w-100">
+                    <div class="d-flex justify-content-center flex-grow-1">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="#venue">Venues</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#sport">Sports</a></li>
+                        </ul>
+                    </div>
+                    {% if user.is_authenticated %}
+					<h6 style="margin-top:13px"><b>Hello! {{user.username}}</b></h6>
+					{% endif %}
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown" id="profileMenu">
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <!-- <li><a class="dropdown-item" href="login.html">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a></li> -->
+                                {% if user.is_authenticated %}
+                                <li><a class="dropdown-item" href="{% url 'SportMeetApp:customer-dashboard' %}" >
+                                    <i class="fa fa-address-card" aria-hidden="true"></i> Dashboard
+                                </a></li>
+                                {% else %}
+                               
+                                <li><a class="dropdown-item" href="{% url 'SportMeetApp:login' %}">
+                                    <i class="bi bi-person-circle"></i> Login
+                                </a></li>
+                                {% endif %}
+                                <li id="userProfileMenu" style="display: none;">
+                                    <a class="dropdown-item" href="{% url 'SportMeetApp:login' %}">
+                                        <i class="bi bi-person"></i> User Profile
+                                    </a>
+                                </li>
+                                <li id="venueOwnerMenu" style="display: none;">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-house-door"></i> Venue Owner Dashboard
+                                    </a>
+                                </li>
+                                {% if user.is_authenticated %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'SportMeetApp:logout' %}">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a></li>
+                                {% endif%}
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+    </nav> 
+    
+<div class="container">
+    <h2>{{ venue.name }}</h2>
+
+    <div class="form-container">
+        <label for="userName">User Name:</label>
+        <input type="text" id="userName" name="username" value="{{ user.username }}" readonly>
+
+        <label for="sport">Sport:</label>
+        <select id="sport">
+            {% for sport in distinct_sports %}
+            <option value="{{ sport.id }}">{{ sport }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="bookingDate">Select Date:</label>
+        <input type="date" id="bookingDate" name="date"
+               value="{{ selected_date }}"
+               min="{{ today }}"
+               {% if max_date %} max="{{ max_date }}" {% endif %}>
+
+        <div class="price-display">Total Price: ₹<span id="totalPrice">0</span></div>
+    </div>
+
+    <!-- Legend for Available and Booked Slots -->
+    <div class="legend">
+        <div><span class="box available-box"></span> Available</div>
+        <div><span class="box selectedbooking-box"></span> Selected</div>
+        <div><span class="box booked-box"></span> Booked</div>
+    </div>
+
+    <!-- Scrollable container -->
+    <div class="booking-table-container">
+        <table id="bookingGrid">
+            <thead>
+                <tr>
+                    <th>Court / Time</th>
+                    <!-- This will be filled dynamically with time slots -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows for each court will be filled dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add to Cart Button -->
+    <button id="addToCartBtn" disabled onclick="openCartModal()">Continue to Booking</button>
+
+    <!-- Modal (hidden by default) -->
+    <div id="cartModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 20px; z-index: 1000; width: 90%; max-width: 500px; max-height: 80vh; box-sizing: border-box;">
+        <h3>Booking Summary</h3>
+        <p><strong>Name:</strong> <span id="modalUserName"></span></p>
+        <p><strong>Date:</strong> <span id="modalDate"></span></p>
+        <p><strong>Sport:</strong> <span id="modalSport"></span></p>
+
+        <!-- Table for Court and Time Details -->
+        <div>
+            <table id="modalBookingTable" style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+                <thead style="display: block; max-height: 500px;">
+                    <tr>
+                        <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Court</th>
+                        <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Start Time</th>
+                        <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">End Time</th>
+                    </tr>
+                </thead>
+                <tbody style="display: block; max-height: 200px;">
+                    <!-- Rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <p style="margin-top: 15px;"><strong>Total Price:</strong> ₹<span id="modalTotalPrice"></span></p>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button onclick="submitBooking()">Confirm Booking</button>
+            <button onclick="closeCartModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Background overlay for modal -->
+    <div id="modalOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+    <p>
+        <a href="{% url 'SportMeetApp:venue_policy' venue.id %}" target="_blank" style="display: block; margin-top: 10px; text-decoration: none; color: black;">
+            View Cancellation & Refund Policy
+        </a>
+    </p>
+</div>
+
+<div class="footer">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Contact Us Section -->
+            <div class="col-md-3">
+                <h5>Contact Us</h5>
+                <div class="footer-links">
+                    <a href="#">Email Us</a>
+                    <a href="#">FAQ</a>
+                    <a href="#">Support</a>
+                    <a href="#">Terms & Conditions</a>
+                </div>
+            </div>
+
+            <!-- Quick Links Section -->
+            <div class="col-md-3">
+                <h5>Quick Links</h5>
+                <div class="footer-links">
+                    <a href="#">Venues</a>
+                    <a href="#">Sports</a>
+                </div>
+            </div>
+
+            <!-- Follow Us Section -->
+            <div class="col-md-3">
+                <h5>Follow Us</h5>
+                <div class="footer-icons">
+                    <a href="#" class="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <!-- Newsletter Section -->
+            <div class="col-md-3">
+                <h5>Newsletter</h5>
+                <div class="newsletter">
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email" aria-label="Email Address">
+                        <button class="btn btn-primary">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="border-white">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p>&copy; 2025 Sports Meet. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <script>
+    // Extract data from Django context (passed as JSON from the backend)
+const timeSlots = {{ time_slots_json|safe }};
+const courts = {{ courts_json|safe }};
+const bookedSlots = {{ booked_slots_json|safe }};
+
+// DOM elements
+const bookingGrid = document.getElementById('bookingGrid');
+const thead = bookingGrid.querySelector('thead tr');
+const tbody = bookingGrid.querySelector('tbody');
+const totalPriceDisplay = document.getElementById('totalPrice');
+const sportSelect = document.getElementById('sport');
+const bookingDate = document.getElementById('bookingDate');
+
+// State variables
+const selectedSlots = new Set();  // Track selected slots
+let courtDurations ={};
+let courtPrices = {};  // Court number -> price map
+
+// ==================
+// Event Listeners
+// ==================
+sportSelect.addEventListener('change', fetchAndRenderBookings);
+bookingDate.addEventListener('change', fetchAndRenderBookings);
+
+// ==================
+// Fetch Bookings and Update Grid
+// ==================
+async function fetchAndRenderBookings() {
+    const selectedDate = bookingDate.value;
+    const sportId = sportSelect.value;
+
+    try {
+        const response = await fetch(`/api/get_bookings/?date=${selectedDate}&sport_id=${sportId}&status=confirmed`);
+        const data = await response.json();
+
+        // Clear and replace bookedSlots object
+        for (const key in bookedSlots) {
+            delete bookedSlots[key];
+        }
+        Object.assign(bookedSlots, data.booked_slots);
+
+        // Clear selections and update grid
+        selectedSlots.clear();
+        initializeCourtPricesAndDurations();
+        createBookingGrid();
+    } catch (error) {
+        console.error('Error fetching bookings:', error);
+    }
+}
+
+// ==================
+// Initialize Court Prices (Only for Selected Sport)
+// ==================
+function initializeCourtPricesAndDurations() {
+    courtPrices = {};
+    courtDurations={};
+    const selectedSport = parseInt(sportSelect.value);
+
+    // Filter courts for selected sport and set prices
+    const filteredCourts = courts.filter(court => court.sport_id === selectedSport);
+    filteredCourts.forEach(court => {
+        const key = `Court${court.court_number}`;
+        courtPrices[key] = court.price;
+        courtDurations[key] = court.Duration;
+    });
+
+    
+}
+console.log("duration:",courtDurations);
+console.log("Courts JSON:", {{ courts_json|safe }});
+
+// ==================
+// Create Booking Grid (For Selected Sport)
+// ==================
+function createBookingGrid() {
+    const selectedSport = parseInt(sportSelect.value);
+
+    // Filter courts for selected sport
+    const filteredCourts = courts.filter(court => court.sport_id === selectedSport);
+
+    // Reset table headers and body
+    thead.innerHTML = '<th>Court / Time</th>';
+    tbody.innerHTML = '';
+
+    // Populate time slot headers
+    timeSlots.forEach(time => {
+        const th = document.createElement('th');
+        th.innerText = time;
+        thead.appendChild(th);
+    });
+
+    // Populate table rows for each court
+    filteredCourts.forEach(court => {
+        const tr = document.createElement('tr');
+        const courtHeader = document.createElement('td');
+        courtHeader.innerText = `Court ${court.court_number}`;
+        tr.appendChild(courtHeader);
+
+        timeSlots.forEach(time => {
+            const td = document.createElement('td');
+            td.className = 'time-slot-cell';
+
+            // Check if the slot is booked for this court and sport
+            const isBooked = bookedSlots[time] && bookedSlots[time].includes(court.court_number);
+
+            if (isBooked) {
+                td.classList.add('booked');
+                td.innerText = 'Booked';
+            } else {
+                td.classList.add('available');
+                td.innerText = 'Available';
+                td.dataset.time = time;
+                td.dataset.court = court.court_number;
+
+                // Add click listener to handle slot selection
+                td.addEventListener('click', () => handleSlotClick(td, time, court.court_number));
+            }
+
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+
+    // Update total price (in case user switched sport while slots were selected)
+    updateTotalPrice();
+}
+
+// ==================
+// Handle Slot Selection / Deselection
+// ==================
+function handleSlotClick(td, time, courtNumber) {
+    if (td.classList.contains('booked')) return;  // Ignore booked slots
+
+    const slotKey = `${time}-Court${courtNumber}`;
+
+    if (td.classList.contains('selected')) {
+        td.classList.remove('selected');
+        selectedSlots.delete(slotKey);
+    } else {
+        td.classList.add('selected');
+        selectedSlots.add(slotKey);
+    }
+
+    updateTotalPrice();
+}
+
+// ==================
+// Update Total Price
+// ==================
+function updateTotalPrice() {
+    let totalPrice = 0;
+
+    selectedSlots.forEach(slot => {
+        const courtNumber = slot.split('-Court')[1];
+        const courtKey = `Court${courtNumber}`;
+        const price = courtPrices[courtKey] || 0;
+        totalPrice += price;
+    });
+
+    totalPriceDisplay.innerText = totalPrice.toFixed(2);
+}
+
+// ==================
+// Initial Load
+// ==================
+fetchAndRenderBookings();
+
+
+    </script>
+
+<script>
+
+const addToCartBtn = document.getElementById('addToCartBtn');
+const cartModal = document.getElementById('cartModal');
+const modalOverlay = document.getElementById('modalOverlay');
+
+// Open Modal with filled details
+function openCartModal() {
+    const userName = document.getElementById('userName').value;
+    const selectedDate = bookingDate.value;
+    const selectedSportText = sportSelect.options[sportSelect.selectedIndex].text;
+
+    // Get the table body element
+    const modalTableBody = document.querySelector('#modalBookingTable tbody');
+    modalTableBody.innerHTML = ''; // Clear existing rows
+
+    // Group selected slots by court
+    const courtsMap = new Map();
+    Array.from(selectedSlots).forEach(slot => {
+        const [time, courtNumber] = slot.split('-Court');
+        if (!courtsMap.has(courtNumber)) {
+            courtsMap.set(courtNumber, []);
+        }
+        courtsMap.get(courtNumber).push(time);
+    });
+
+    // Populate the table with court and time details
+    courtsMap.forEach((times, courtNumber) => {
+        // Sort times for the court
+        times.sort((a, b) => new Date(`1970-01-01T${formatTime(a)}`) - new Date(`1970-01-01T${formatTime(b)}`));
+
+        // Group contiguous slots
+        const groupedSlots = groupContiguousSlots(times, courtDurations[`Court${courtNumber}`] || 30);
+
+        // Add a row for each group of slots
+        groupedSlots.forEach(group => {
+            const startTime = group[0]; // First slot in the group
+            const endTime = calculateEndTime(group[group.length - 1], courtDurations[`Court${courtNumber}`] || 30); // Last slot in the group
+
+            // Create a new row
+            const row = document.createElement('tr');
+
+            // Add court number
+            const courtCell = document.createElement('td');
+            courtCell.innerText = `Court ${courtNumber}`;
+            courtCell.style.border = '1px solid #ddd';
+            courtCell.style.padding = '8px';
+            row.appendChild(courtCell);
+
+            // Add start time
+            const startTimeCell = document.createElement('td');
+            startTimeCell.innerText = formatTime(startTime);
+            startTimeCell.style.border = '1px solid #ddd';
+            startTimeCell.style.padding = '8px';
+            row.appendChild(startTimeCell);
+
+            // Add end time
+            const endTimeCell = document.createElement('td');
+            endTimeCell.innerText = formatTime(endTime);
+            endTimeCell.style.border = '1px solid #ddd';
+            endTimeCell.style.padding = '8px';
+            row.appendChild(endTimeCell);
+
+            // Add the row to the table
+            modalTableBody.appendChild(row);
+        });
+    });
+
+    // Update other modal fields
+    document.getElementById('modalUserName').innerText = userName;
+    document.getElementById('modalDate').innerText = selectedDate;
+    document.getElementById('modalSport').innerText = selectedSportText;
+    document.getElementById('modalTotalPrice').innerText = totalPriceDisplay.innerText;
+
+    // Show modal
+    cartModal.style.display = 'block';
+    modalOverlay.style.display = 'block';
+}
+
+// Close modal
+function closeCartModal() {
+    cartModal.style.display = 'none';
+    modalOverlay.style.display = 'none';
+}
+
+// Handle Pay Now (you can replace with your actual payment logic)
+function payNow() {
+    alert('Redirecting to payment gateway...');
+    // Here you could add logic to submit booking data to your backend
+    closeCartModal();
+}
+
+// Enable/Disable Add to Cart button based on slot selection
+function updateAddToCartButton() {
+    addToCartBtn.disabled = selectedSlots.size === 0;
+}
+
+// Update the total price and also enable/disable add to cart button
+function updateTotalPrice() {
+    let totalPrice = 0;
+
+    selectedSlots.forEach(slot => {
+        const courtNumber = slot.split('-Court')[1];
+        const courtKey = `Court${courtNumber}`;
+        const price = courtPrices[courtKey] || 0; // Price per slot
+        totalPrice += price; // Add the price for each slot
+    });
+
+    totalPriceDisplay.innerText = totalPrice.toFixed(2);
+    updateAddToCartButton();
+}
+
+// Function to format time as HH:MM:SS
+const formatTime = (time) => {
+    const timeWithoutAmPm = time.replace(/\s*[AP]M/i, '');
+    const [hours, minutes] = timeWithoutAmPm.split(':');
+    const isPM = time.toLowerCase().includes('pm');
+    let formattedHours = parseInt(hours, 10);
+    if (isPM && formattedHours < 12) {
+        formattedHours += 12; // Convert to 24-hour format
+    } else if (!isPM && formattedHours === 12) {
+        formattedHours = 0; // Handle 12 AM
+    }
+    const formattedMinutesStr = (minutes || '00').padStart(2, '0');
+    return `${formattedHours.toString().padStart(2, '0')}:${formattedMinutesStr}:00`;
+};
+
+function getCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Function to group contiguous time slots dynamically based on slot duration
+function groupContiguousSlots(slots, slotDurationMinutes) {
+   
+
+    // Sort slots by time
+    slots.sort((a, b) => {
+        const timeA = formatTime(a);
+        const timeB = formatTime(b);
+        return new Date(`1970-01-01T${timeA}`) - new Date(`1970-01-01T${timeB}`);
+    });
+
+    const groupedSlots = [];
+    let currentGroup = [slots[0]];
+
+    for (let i = 1; i < slots.length; i++) {
+        const prevTime = formatTime(slots[i - 1]);
+        const currTime = formatTime(slots[i]);
+
+        // Calculate time difference in minutes
+        const prevDate = new Date(`1970-01-01T${prevTime}`);
+        const currDate = new Date(`1970-01-01T${currTime}`);
+        const timeDifference = (currDate - prevDate) / (1000 * 60); // Difference in minutes
+
+       
+
+        if (timeDifference === slotDurationMinutes) { // Check if the difference matches the slot duration
+            currentGroup.push(slots[i]); // Add to the current group
+        } else {
+            groupedSlots.push(currentGroup); // Save the current group
+            currentGroup = [slots[i]]; // Start a new group
+        }
+    }
+
+    if (currentGroup.length > 0) {
+        groupedSlots.push(currentGroup); // Save the last group
+    }
+
+   
+    return groupedSlots;
+}
+
+
+
+function calculateEndTime(lastSlot, slotDurationMinutes) {
+
+    // Parse the last slot time
+    const lastSlotTime = formatTime(lastSlot);
+  
+    // Create a valid Date object
+    const lastSlotDate = new Date(`1970-01-01T${lastSlotTime}`);
+  
+
+    // Add the slot duration in milliseconds
+    const endTime = new Date(lastSlotDate.getTime() + slotDurationMinutes * 60 * 1000);
+   
+    // Format the end time as "HH:MM:SS"
+    const formattedEndTime = endTime.toTimeString().split(' ')[0];
+  
+
+    return formattedEndTime;
+}
+ 
+function submitBooking() {
+    const customerId = "{{ user.id }}"; // Replace with the correct way to get the customer's ID
+    const venueId = "{{ venue.id }}";   // Replace with the correct way to get the venue's ID
+
+    // Get all selected courts with their prices
+    const selectedCourts = Array.from(selectedSlots).map(slot => {
+        const courtNumber = slot.split('-Court')[1];
+        const courtKey = `Court${courtNumber}`;
+        const price = courtPrices[courtKey] || 0; // Get the price for this court
+        const duration = courtDurations[courtKey] || 30;
+
+        // Find the court ID for the given court number
+        const court = courts.find(c => c.court_number === parseInt(courtNumber));
+        const courtId = court ? court.id : null;
+
+        return {
+            courtId: courtId, // Use the court ID instead of the court number
+            price: price,
+            duration: duration,
+            time: slot.split('-')[0] // Extract time part
+        };
+    });
+
+   
+
+    // Group selected slots by court
+    const courtsMap = new Map();
+    selectedCourts.forEach(court => {
+        if (!courtsMap.has(court.courtId)) {
+            courtsMap.set(court.courtId, []);
+        }
+        courtsMap.get(court.courtId).push(court);
+    });
+
+    
+
+    // Process each court's slots
+    courtsMap.forEach((slots, courtId) => {
+      
+
+        // Sort slots by time
+        slots.sort((a, b) => new Date(`1970-01-01T${formatTime(a.time)}`) - new Date(`1970-01-01T${formatTime(b.time)}`));
+      
+        // Group contiguous slots based on slot duration
+        const groupedSlots = groupContiguousSlots(slots.map(slot => slot.time), slots[0].duration);
+      
+
+        // Create a booking for each group of slots
+        groupedSlots.forEach(group => {
+            const startTime = group[0]; // First slot in the group
+            const endTime = calculateEndTime(group[group.length - 1], slots[0].duration); // Last slot in the group
+
+            // Calculate total duration (in hours)
+            const totalDuration = group.length * (slots[0].duration / 60); // Convert minutes to hours
+
+            // Calculate price for this group
+            let totalPrice;
+            if (group.length === 1) {
+                // Non-contiguous slot: Use the slot price
+                totalPrice = slots.find(slot => slot.time === startTime).price;
+            } else {
+                // Contiguous slots: Sum the prices for all slots in the group
+                totalPrice = slots.find(slot => slot.time === startTime).price * group.length;
+            }
+
+            const bookingData = {
+                customer: parseInt(customerId), // Send customer ID
+                venue: parseInt(venueId),       // Send venue ID
+                sport: parseInt(sportSelect.value), // Send sport ID
+                court: courtId, // Send the court ID
+                date: bookingDate.value, // Send selected date
+                start_time: formatTime(startTime), // Format as "HH:MM:SS"
+                end_time: formatTime(endTime),     // Format as "HH:MM:SS"
+                price: totalPrice, // Send the total price for this group
+                mode_of_pyment: "online"
+            };
+
+          
+
+            fetch('/api/bookings/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()  // Add CSRF token here
+                },
+                body: JSON.stringify(bookingData)
+            })
+            .then(response => {
+               
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Booking failed');
+                }
+            })
+            .then(data => {
+                alert('Booking successful!');
+                closeCartModal();
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Booking failed: ' + error.message);
+            });
+        });
+    });
+}
+
+
+</script>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/67c933d77390f819097769b7/1ilkv50h5';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+</body>
+</html>

@@ -6,10 +6,11 @@ phases:
       python: 3.8  # ✅ Set Python version (change as needed)
   
   pre_build:
-    commands:
-      - echo "Pre-build operations started..."
-      - python -m pip install --upgrade pip  # ✅ Ensure latest pip
-      - python -m pip install -r requirements.txt  # ✅ More reliable way to install dependencies
+  commands:
+    - pyenv install 3.11
+    - pyenv global 3.11
+    - python -m pip install --upgrade pip
+
 
   build:
     commands:

@@ -12,8 +12,6 @@ phases:
       - echo "Installing PostgreSQL development packages..."
       - apt install -y libpq-dev gcc python3-dev
       - echo "Ensuring Python 3.11 is globally set..."
-      - if ! pyenv versions | grep -q '3.11'; then pyenv install 3.11; fi
-      - pyenv global 3.11
       - python -m pip install --upgrade pip
 
   build:

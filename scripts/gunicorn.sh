@@ -1,5 +1,11 @@
 #!/bin/bash
 echo "Starting Gunicorn..."
-cd /home/ubuntu/SPORTSAPPLICATION  # Change this to your project directory
-source /home/ubuntu/env/bin/activate
-gunicorn --workers 3 --bind 0.0.0.0:8000 wsgi:app  # Update with your Gunicorn command
+
+# Change to your project directory
+cd /home/ubuntu/SPORTSAPPLICATION  
+
+# Activate virtual environment
+source /home/ubuntu/env/bin/activate  
+
+# Run Gunicorn with your app
+exec /home/ubuntu/env/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 wsgi:app  # Adjust as needed

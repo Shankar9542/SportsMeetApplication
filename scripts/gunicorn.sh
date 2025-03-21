@@ -1,7 +1,11 @@
 #!/bin/bash
-echo "Starting Gunicorn..."
 
-cd /home/ubuntu/SPORTSAPPLICATION
+echo "Starting Gunicorn..."
+cd /home/ubuntu/SPORTSAPPLICATION || exit
 source /home/ubuntu/env/bin/activate
 
-exec gunicorn --workers 3 --bind 0.0.0.0:8000 SportMeet.wsgi:application --log-file /home/ubuntu/gunicorn.log 2>&1
+# Kill any existing Gunicorn processes
+pkill -f gunicorn
+
+# Start Gunicorn
+exec gunicorn --workers 3 --bind 0.0.0.0:8000 wsgi:application

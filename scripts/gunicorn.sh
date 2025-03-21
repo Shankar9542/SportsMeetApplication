@@ -1,28 +1,27 @@
-#!/usr/bin/bash
+#!/bin/bash
 
-# Stop any existing Gunicorn process (owned by the 'ubuntu' user)
-if pgrep -u ubuntu -f gunicorn; then
-    echo "Stopping existing Gunicorn process..."
-    pkill -u ubuntu -f gunicorn
-    sleep 2
-fi
+# Define Gunicorn process name and log file
+APP_NAME="myapp"  # Change this to your app name
+GUNICORN_CMD="/usr/bin/gunicorn"  # Adjust if Gunicorn is installed elsewhere
+LOG_FILE="/var/log/gunicorn.log"
+SOCKET_FILE="/tmp/gunicorn.sock"
 
-# Navigate to the project directory
-cd /home/ubuntu/SPORTSAPPLICATION || { echo "Failed to navigate to project directory"; exit 1; }
+echo "Stopping existing Gunicorn process..."
+pkill -f "gunicorn" || echo "No Gunicorn process found."
 
-# Activate the virtual environment
-source /home/ubuntu/env/bin/activate
+# Wait for the process to stop completely
+sleep 3
 
-# Ensure Gunicorn socket file is removed (avoids potential conflicts)
-rm -f /home/ubuntu/SPORTSAPPLICATION/gunicorn.sock
+echo "Starting Gunicorn process..."
+cd /home/ubuntu/SPORTSAPPLICATION  # Change this to your app directory
 
-# Start Gunicorn with correct user permissions in the background
-exec gunicorn --workers 3 --bind unix:/home/ubuntu/SPORTSAPPLICATION/gunicorn.sock SportMeet.wsgi:application --daemon
+# Start Gunicorn
+$GUNICORN_CMD --workers 3 --bind unix:$SOCKET_FILE wsgi:app > $LOG_FILE 2>&1 &
 
-# Confirm if Gunicorn started successfully
-if [[ $? -eq 0 ]]; then
+# Verify if Gunicorn started
+if pgrep -f "gunicorn"; then
     echo "Gunicorn started successfully."
 else
-    echo "Failed to start Gunicorn!"
+    echo "Failed to start Gunicorn!" >&2
     exit 1
 fi

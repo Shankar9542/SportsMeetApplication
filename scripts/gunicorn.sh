@@ -4,3 +4,7 @@ sudo cp /home/ubuntu/SPORTSAPPLICATION/gunicorn/gunicorn.service  /etc/systemd/s
 
 sudo systemctl start gunicorn.service
 sudo systemctl enable gunicorn.service
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn
+sudo systemctl status gunicorn
+

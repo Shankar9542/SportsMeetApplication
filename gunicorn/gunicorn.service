@@ -6,7 +6,7 @@ After=network.target
 User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/SPORTSAPPLICATION
-ExecStart=/home/ubuntu/env/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/SPORTSAPPLICATION/gunicorn.sock SportMeet.wsgi:application
+ExecStart=/home/ubuntu/env/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/SPORTSAPPLICATION/SportMeet/gunicorn.sock SportMeet.wsgi:application
 Restart=always
 Environment="PATH=/home/ubuntu/env/bin"
 

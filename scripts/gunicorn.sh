@@ -13,4 +13,4 @@ cd /home/ubuntu/SPORTSAPPLICATION || exit
 source /home/ubuntu/env/bin/activate
 
 # Start Gunicorn with proper user permissions
-exec gunicorn --workers 3 --bind 0.0.0.0:8000 wsgi:application --daemon --user=ubuntu --group=ubuntu
+exec gunicorn --workers 3 --bind unix:/home/ubuntu/SPORTSAPPLICATION/gunicorn.sock SportMeet.wsgi:application

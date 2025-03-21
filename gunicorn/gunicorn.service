@@ -1,13 +1,14 @@
 [Unit]
-Description=gunicorn daemon
-Requires=gunicorn.socket
+Description=Gunicorn daemon for Django application
 After=network.target
+
 [Service]
 User=ubuntu
 Group=www-data
-WorkingDirectory=/home/ubuntu/blogprojectdrf
-ExecStart=/home/ubuntu/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/ubuntu/blogprojectdrf/blog/blog.sock blog.wsgi:application
+WorkingDirectory=/home/ubuntu/SPORTSAPPLICATION
+ExecStart=/home/ubuntu/env/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/SPORTSAPPLICATION/gunicorn.sock SportMeet.wsgi:application
+Restart=always
+Environment="PATH=/home/ubuntu/env/bin"
 
-       
 [Install]
 WantedBy=multi-user.target

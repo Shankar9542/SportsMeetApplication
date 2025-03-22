@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import NoReverseMatch, path, reverse
 from django.utils.html import format_html
 from django.contrib.auth.forms import UserChangeForm
-from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
+#from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 from django.utils.timezone import now
 from django.contrib import messages
 from django.contrib.auth import get_user_model

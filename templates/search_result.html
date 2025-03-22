@@ -26,63 +26,96 @@
 </head>
 <body>
      <!-- Navbar -->
-     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand meet" href="{% url 'SportMeetApp:home'%}">Sports Meet</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand meet" href="{% url 'SportMeetApp:home'%}">SportMeet</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="d-flex justify-content-between w-100">
                     <div class="d-flex justify-content-center flex-grow-1">
-                       
+                        <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="#venue">Venues</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#sport">Sports</a></li> 
+                        </ul>
                     </div>
+                    {% if user.is_authenticated %}
+					<h6 style="margin-top:13px"><b>Hello! {{user.username}}</b></h6>
+					{% endif %}
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown" id="profileMenu">
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                <!-- <li><a class="dropdown-item" href="login.html">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a></li> -->
+                                {% if user.is_authenticated %}
+                                <li><a class="dropdown-item" href="{% url 'SportMeetApp:customer-dashboard' %}" >
+                                    <i class="fa fa-address-card" aria-hidden="true"></i> Dashboard
+                                </a></li>
+                                {% else %}
+                               
+                                <li><a class="dropdown-item" href="{% url 'SportMeetApp:login' %}">
+                                    <i class="bi bi-person-circle"></i> Login
+                                </a></li>
+                                {% endif %}
+                                <li id="userProfileMenu" style="display: none;">
+                                    <a class="dropdown-item" href="{% url 'SportMeetApp:login' %}">
+                                        <i class="bi bi-person"></i> User Profile
+                                    </a>
+                                </li>
+                                <li id="venueOwnerMenu" style="display: none;">
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-house-door"></i> Venue Owner Dashboard
+                                    </a>
+                                </li>
+                                {% if user.is_authenticated %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'SportMeetApp:logout' %}">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a></li>
+                                {% endif%}
+                            </ul>
+                        </li>
+                    </ul>
+                    
                 </div>
             </div>
         </div>
     </nav>
     
     
-<div class="container-fluid mt-5 mb-2"> 
-    <div class="row g-2">
-        {% for venue in results %}
-            <div class="col-md-3 shadow1 border-0 p-3">
-                <a href="{% url 'SportMeetApp:venue-detail' venue.id %}" style="text-decoration: none; color: inherit;">
-                <!-- Main Venue Image (First Image) -->
-               
-                    <img src="{{venue.image}}" class="card-img-top" alt="{{ venue.name }}">
-    
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <!-- Venue Name -->
-                        <div class="card-name">
-                            <h5>{{ venue.name }}</h5>
+    <div class="container-fluid mt-5 mb-2">
+        <div class="row g-3"> 
+            {% for venue in results %}
+                <div class="col-md-3 col-sm-6"> 
+                    <div class="card shadow1 border-0 p-3">
+                        <a href="{% url 'SportMeetApp:venue-detail' venue.id %}" style="text-decoration: none; color: inherit;">
+                            <img src="{{ venue.image }}" class="card-img-top" alt="{{ venue.name }}">
+                        </a>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ venue.name }}</h5>
+                                <div class="rating">
+                                    <strong>4.5</strong> <i class="bi bi-star-fill text-warning"></i>
+                                </div>
+                            </div>
+                            <p class="card-text text-truncate" style="max-width: 150px;">{{ venue.address }}</p>
                         </div>
-    
-                        <!-- Rating -->
-                        <div class="rating">
-                            <strong>4.5</strong> <i class="bi bi-star-fill text-warning"></i>
-                        </div>
-                    </div>
-    
-                    <!-- Address and Image Gallery -->
-                    <div class="d-flex justify-content-between mt-3">
-                        <!-- Address -->
-                        <div class="address" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            {{ venue.address }}
-                        </div>
-
                     </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
     
-</div>
     
    
    
  <!-- Footer Section -->
+<!-- Footer Section -->
 <div class="footer">
     <div class="container-fluid">
         <div class="row">
@@ -93,7 +126,7 @@
                     <a href="#">Email Us</a>
                     <a href="#">FAQ</a>
                     <a href="#">Support</a>
-                    <a href="#">Terms & Conditions</a>
+                    
                 </div>
             </div>
 
@@ -117,15 +150,14 @@
                     <a href="#" class="linkedin"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
+           
+
 
             <!-- Newsletter Section -->
             <div class="col-md-3">
-                <h5>Newsletter</h5>
-                <div class="newsletter">
-                    <div class="input-group">
-                        <input type="email" class="form-control" placeholder="Enter your email" aria-label="Email Address">
-                        <button class="btn btn-primary">Subscribe</button>
-                    </div>
+                <h5>Policies</h5>
+                <div class="footer-links">
+                    <a href="#">Terms & Conditions</a>
                 </div>
             </div>
         </div>

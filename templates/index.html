@@ -53,6 +53,12 @@
                             <li class="nav-item"><a class="nav-link" href="#sport">Sports</a></li>
                         </ul>
                     </div>
+                    {%if not user.is_authenticated%}
+                    <div class="listproperty">
+                        <a style="color:white" href="{% url 'SportMeetApp:register-venue' %}" class="btn btn-info list">List your venue</a>
+                    </div>
+                    {% endif %}
+
                     {% if user.is_authenticated %}
 					<h6 style="margin-top:13px"><b>Hello! {{user.username}}</b></h6>
 					{% endif %}
@@ -101,114 +107,7 @@
     </nav>
     
 
-  {% comment %} <!-- Login Modal -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Login</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <!-- User Login Form -->
-                <form id="user-form" method="POST" action="{% url 'login' %}">
-                    {% csrf_token %} <!-- Add CSRF token for security -->
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="email" class="form-control" name="email" required> <!-- Use 'username' for Django AuthenticationForm -->
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" required> <!-- Use 'password' for Django AuthenticationForm -->
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
-                    <a href="#" class="register-now" data-bs-toggle="modal" data-bs-target="#registerModal">Not registered? Register Now</a>
-
-                    <!-- Social Login Options with Circular Icons -->
-                    <div class="d-flex justify-content-center mt-3">
-                        {% load socialaccount %}
-                        <a href=""><button type="button" class="btn btn-outline-primary social-btn">
-                            <i class="fab fa-facebook-f"></i>
-                        </button></a>
-                        <a href="{% provider_login_url 'google' action='reauthenticate' %}?next=/"><button type="button" class="btn btn-outline-danger social-btn ms-3">
-                            <i class="fab fa-google"></i>
-                        </button></a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Register Modal -->
-<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Register on SportMeet</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-
-                <!-- Register Form -->
-                <form id="registerForm" method="POST" action="{% url 'register' %}">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" name="username" class="form-control" placeholder="Username" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="email" name="email" class="form-control" placeholder="Email Address" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="tel" name="phone" class="form-control" placeholder="Mobile Number" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" name="password" class="form-control" placeholder="Password" required>
-                        {% comment %} <small class="form-text text-muted">
-                            Password must be at least 8 characters long, contain at least one uppercase letter, one digit, and one special character.
-                        </small> {% endcomment %}
-                    {% comment %} </div>
-                    <div class="mb-3">
-                        <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
-                    </div>
-                    <!-- Toggle Switch for User/Owner -->
-                    <div class="toggle-container mb-3">
-                        <span><strong>Register as:</strong></span>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="userTypeSwitch" name="is_owner">
-                            <label class="form-check-label" for="userTypeSwitch" id="userTypeLabel">Venue Owner</label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-
-                    <!-- Social Login Buttons -->
-                    <div class="d-flex justify-content-center mt-3">
-                        {% load socialaccount %}
-                        <a href="#"><button type="button" class="btn btn-outline-primary social-btn">
-                            <i class="fab fa-facebook-f"></i>
-                        </button></a>
-                        <a href="{% provider_login_url 'google' action='reauthenticate' %}?next=/">
-                            <button type="button" class="btn btn-outline-danger social-btn ms-3">
-                                <i class="fab fa-google"></i>
-                            </button>
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
- {% endcomment %} 
-
-
+  
     
     <!-- Hero Section with Search -->
     <div class="hero-section" style="background: url('{{ banner_image }}') no-repeat center center/cover;">
@@ -223,7 +122,7 @@
                             <i class="bi bi-geo-alt"></i>
                         </span>
                         <input type="text" class="form-control location" id="locationInput" name="location" 
-                               placeholder="Enter City, Area, or Address" required>
+                               placeholder="Enter City or Area" required>
                     </div>
                 </div>
     
@@ -282,7 +181,7 @@
         <div class="row" id="sport">
             <div class="col-md-12 d-flex justify-content-between align-items-center">
                 <h2 class="text-center1">Select Sport</h2>
-                <a href="/sports/" class="btn btn-primary">See All</a>
+                <a href="{% url 'SportMeetApp:allvenue-list' %}" class="btn btn-primary">See All</a>
             </div>
         </div>
         <div class="swiper sportsSwiper mt-2">
@@ -302,7 +201,7 @@
                     <a href="#">Email Us</a>
                     <a href="#">FAQ</a>
                     <a href="#">Support</a>
-                    <a href="#">Terms & Conditions</a>
+                    
                 </div>
             </div>
 
@@ -331,12 +230,9 @@
 
             <!-- Newsletter Section -->
             <div class="col-md-3">
-                <h5>Newsletter</h5>
-                <div class="newsletter">
-                    <div class="input-group">
-                        <input type="email" class="form-control" placeholder="Enter your email" aria-label="Email Address">
-                        <button class="btn btn-primary">Subscribe</button>
-                    </div>
+                <h5>Policies</h5>
+                <div class="footer-links">
+                    <a href="#">Terms & Conditions</a>
                 </div>
             </div>
         </div>
@@ -494,7 +390,7 @@
                     // Add event listener to navigate to the venues page
                     swiperSlide.addEventListener('click', function () {
                         const sportId = this.getAttribute('data-sport-id');
-                        window.location.href = `/sports/${sportId}/venues-list/`; // Redirect to new venues page
+                        window.location.href = `/sports/${sportId}/venues/`; // Updated URL
                     });
     
                     sportSwiperWrapper.appendChild(swiperSlide);

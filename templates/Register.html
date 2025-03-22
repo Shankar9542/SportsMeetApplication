@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Page</title>
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
@@ -188,6 +189,22 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; /* Initially hidden */
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -195,7 +212,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
         <div class="container">
-            <a class="navbar-brand meet" href="{% url 'SportMeetApp:home' %}">SportMeet</a>
+            <b><a class="navbar-brand meet" style="color:#00ADF9" href="{% url 'SportMeetApp:home' %}">SportMeet</a></b>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="d-flex justify-content-between w-100">
                     <div class="d-flex justify-content-center flex-grow-1">
@@ -231,13 +248,28 @@
             <div class="right-section">
                 <h1>Create Your Account</h1>
                 <div id="message" class="alert" style="display: none;"></div>
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+
+
                 <form id="registerForm" method="POST" action="{% url 'SportMeetApp:register' %}">
                     {% csrf_token %}
                     <input type="text" name="first_name" placeholder="First Name" required>
                     <input type="text" name="last_name" placeholder="Last Name" required>
                     <input type="text" name="username" placeholder="User Name" required>
                     <input type="email" name="email" placeholder="Email Address" required>
-                    <input type="tel" name="phone" placeholder="Mobile Number" required>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" value="+61" readonly style="width: 50px; text-align: center; background: #eee; border: 1px solid #ccc; border-radius: 5px 0 0 5px;">
+                        <input type="tel" name="phone" id="phone" placeholder="Enter 9-digit number" required pattern="[0-9]{9}" maxlength="9" style="flex: 1; border-radius: 0 5px 5px 0;">
+                    </div>
                     <div class="password-container">
                         <input type="password" name="password" id="password" placeholder="Password" required>
                         <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
@@ -246,25 +278,33 @@
                         <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
                         <i class="fas fa-eye toggle-password" onclick="togglePassword('confirm_password', this)"></i>
                     </div>
-                    <div class="toggle-container mb-3">
-                        <strong style="margin-left: 193px;">Register as:</strong>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="userTypeSwitch" name="is_owner">
-                            <label class="form-check-label" style="margin-top: 12px;" for="userTypeSwitch" id="userTypeLabel">Venue Owner</label>
-                        </div>
-                    </div>
+                    
                     <button type="submit" class="register-btn">Register</button>
                 </form>
             </div>
         </div>
     </div>
 
+    <div id="loading" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span>Please wait...</span>
+    </div>
+    
+    
     <script>
         document.getElementById("registerForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            const formData = new FormData(this);
+            
+            // Show loading spinner and message
+            const loadingDiv = document.getElementById("loading");
+            loadingDiv.style.display = "flex";
+            loadingDiv.style.alignItems = "center";
+            loadingDiv.style.justifyContent = "center";
+            loadingDiv.style.gap = "10px";
         
-            formData.append("is_owner", document.getElementById("userTypeSwitch").checked ? "true" : "false");
+            const formData = new FormData(this);
         
             fetch("{% url 'SportMeetApp:register-user' %}", {
                 method: "POST",
@@ -273,7 +313,14 @@
                     "X-CSRFToken": document.querySelector("input[name=csrfmiddlewaretoken]").value
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw errorData; // Throw the error data to be caught in the catch block
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 const messageDiv = document.getElementById("message");
                 messageDiv.style.display = "block";
@@ -288,44 +335,50 @@
                             window.location.href = data.redirect_url;
                         }, 2000);  // Redirect after 2 seconds
                     }
-                } else {
+                } else if (data.error) {
+                    // Handle errors returned by the backend
                     messageDiv.className = "alert alert-danger";
-                    if (data.error) {
-                        if (typeof data.error === 'object') {
-                            let errorMessages = [];
-                            for (let key in data.error) {
-                                errorMessages.push(data.error[key].join(' '));
-                            }
-                            messageDiv.innerText = errorMessages.join('\n');
-                        } else {
-                            messageDiv.innerText = data.error;
+                    if (typeof data.error === 'object') {
+                        // If the error is an object (field-specific errors)
+                        let errorMessages = [];
+                        for (let key in data.error) {
+                            errorMessages.push(`${key}: ${data.error[key].join(' ')}`);
                         }
+                        messageDiv.innerText = errorMessages.join('\n');
                     } else {
-                        messageDiv.innerText = "Something went wrong.";
+                        // If the error is a simple string
+                        messageDiv.innerText = data.error;
                     }
+                } else {
+                    messageDiv.innerText = "Something went wrong.";
                 }
             })
             .catch(error => {
                 const messageDiv = document.getElementById("message");
                 messageDiv.style.display = "block";
                 messageDiv.className = "alert alert-danger";
-                messageDiv.innerText = "Error submitting the form.";
+        
+                if (error.error) {
+                    // Handle errors thrown from the response
+                    if (typeof error.error === 'object') {
+                        let errorMessages = [];
+                        for (let key in error.error) {
+                            errorMessages.push(`${key}: ${error.error[key].join(' ')}`);
+                        }
+                        messageDiv.innerText = errorMessages.join('\n');
+                    } else {
+                        messageDiv.innerText = error.error;
+                    }
+                } else {
+                    // Handle network or other unexpected errors
+                    messageDiv.innerText = "Form submission failed. Please try again.";
+                }
+            })
+            .finally(() => {
+                // Hide loading spinner and message
+                loadingDiv.style.display = "none";
             });
         });
-
-        function togglePassword(fieldId, icon) {
-            const field = document.getElementById(fieldId);
-            if (field.type === "password") {
-                field.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                field.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-
     </script>
 </body>
 </html>

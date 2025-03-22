@@ -528,17 +528,25 @@ class VenueOwnerProfileAdmin(admin.ModelAdmin):
 
 
 
+
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ['id','user', 'phone', 'user__email', 'actions_column']
-    # list_filter = ['user__username','user__email']
-    search_fields = ['user__username', 'user__email', 'phone']
+    list_display = ['id', 'user', 'phone', 'get_email', 'actions_column']  # Fixed 'user__email'
+
+    search_fields = ['user__username', 'user__email', 'phone']  # 'user__email' is valid here
+
+    def get_email(self, obj):
+        """Fetch email from the related User model."""
+        return obj.user.email if obj.user else "No Email"
     
-    
+    get_email.short_description = 'Email'  # Admin column name
+
     def actions_column(self, obj):
         # Debugging: Check if obj.id is valid
         if not obj.id:
             return "No ID"
+        return "Actions"  # Placeholder for actual actions
+
         
         try:
             # Generate the URL for the change page (view action)

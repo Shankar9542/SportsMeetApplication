@@ -25,6 +25,9 @@ hooks:
     - location: scripts/nginx.sh
       timeout: 300
       runas: ubuntu
+    - location: scripts/deploy.sh
+      timeout: 300
+      runas: ubuntu
 
   ApplicationStop:
     - location: scripts/stop_app.sh

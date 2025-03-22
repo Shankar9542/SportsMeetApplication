@@ -23,13 +23,16 @@ import requests
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth import get_user_model
-
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.utils.dateparse import parse_date
 from .utils.email_utils import send_booking_confirmation_email, send_booking_reminder_email
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from.forms import *
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Sum, Count
 
 def test_booking_emails(request):
     user_email = 'avinashnukathoti357@gmail.com'
@@ -84,6 +87,9 @@ def approval_page(request):
 def sports_venue(request):
     return render(request, "sportspage.html")
 
+def sports(request):
+    return render(request,'sports.html')
+
 
 
 class VerifyEmailView(APIView):
@@ -121,73 +127,61 @@ class RegisterUserView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            # Include the success page URL in the response
-            return Response({
-                "success": "Registration successful. Please check your email to verify your account.",
-                "redirect_url": reverse('SportMeetApp:registration_success')  # URL for the success page
+            return JsonResponse({
+                'success': 'Registration successful! Please check your email to verify your account.',
+                'redirect_url': request.build_absolute_uri(reverse('SportMeetApp:registration_success'))
             }, status=status.HTTP_201_CREATED)
         else:
-            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            # Return field-specific errors in a consistent format
+            errors = {}
+            for field, error_list in serializer.errors.items():
+                errors[field] = error_list
+            return JsonResponse({
+                'error': errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
   
 def register_view(request):
     return render(request, "register.html")
+
+def register_venue(request):
+    return render(request, "register_venue.html")
     
 def registration_success(request):
     return render(request, "register_success.html")
+
+
+class VenueOwnerRegisterView(generics.CreateAPIView):
+    serializer_class = VenueOwnerRegisterSerializer
     
-    
-    
-# def register_user(request):
-#     if request.method == "POST":
-#         # Get form data
-#         first_name = request.POST.get("first_name")
-#         last_name = request.POST.get("last_name")
-#         username = request.POST.get("username")
-#         email = request.POST.get("email")
-#         phone = request.POST.get("phone")
-#         password = request.POST.get("password")
-#         confirm_password = request.POST.get("confirm_password")
-#         is_owner = request.POST.get("is_owner") == "true"  # Checkbox value
 
-#         # Password confirmation check
-#         if password != confirm_password:
-#             return JsonResponse({"error": "Passwords do not match"}, status=400)
+    def create(self, request, *args, **kwargs):
+        # import pdb
+        # pdb.set_trace()
+        """Handles venue owner registration and redirects with user ID."""
+        serializer = self.get_serializer(data=request.data)
 
-#         # Check if username or email already exists
-#         if User.objects.filter(username=username).exists():
-#             return JsonResponse({"error": "Username already taken"}, status=400)
+        if serializer.is_valid():
+            user = serializer.save()  # Save user and get the instance
+            messages.success(request, "Registration successful! Please add your venue details.")
 
-#         if User.objects.filter(email=email).exists():
-#             return JsonResponse({"error": "Email already registered"}, status=400)
+            # Correct URL redirection
+            return JsonResponse({
+            'success': 'Registration successful! Please add your venue details.',
+            'redirect_url': f'/register/venue/add/{user.id}/'
+            })
+        else:
+            # Return field-specific errors in a consistent format
+            errors = {}
+            for field, error_list in serializer.errors.items():
+                errors[field] = error_list
+            return JsonResponse({
+                'error': errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-#         # Create user
-#         user = User.objects.create_user(username=username, email=email, password=password)
-#         user.first_name = first_name
-#         user.last_name = last_name
+ 
 
-#         if is_owner:
-#             user.is_staff = True  # Give staff status to owners
-#         user.save()
-
-#         # Create appropriate profile
-#         if is_owner:
-#             VenueOwnerProfile.objects.create(user=user, phone=phone)
-#             return JsonResponse({
-#                 "success": "Registration successful", 
-#                 "redirect_url": "/approval/"  # Send URL for approval page
-#             }, status=201)
-#         else:
-#             CustomerProfile.objects.create(user=user, phone=phone)
-#             return JsonResponse({
-#                 "success": "Registration successful", 
-#                 "redirect_url": '/login/'
-#             }, status=201)
-
-     
-
-#     return render(request, "register.html")
 
 
 
@@ -251,14 +245,16 @@ def user_logout(request):
 
 class VenueListView(APIView):
     def get(self, request):
-        venues = Venue.objects.all()[:6]  # Get the first 6 venues
+        # Filter venues where the associated VenueOwnerProfile is approved
+        venues = Venue.objects.filter(owner__is_approved=True)[:6]
         serializer = VenueSerializer(venues, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 class VenueAllListView(APIView):
     def get(self, request):
-        venues = Venue.objects.all()  # Get the first 6 venues
+        # Filter venues where the associated VenueOwnerProfile is approved
+        venues = Venue.objects.filter(owner__is_approved=True)
         serializer = VenueSerializer(venues, many=True)
         
         context = {
@@ -290,7 +286,21 @@ class VenueDetailView(APIView):
         }
         return render(request, 'sportspage.html', context)
     
+def venues_by_sport(request, sport_id):
+    # Get the sport object or return a 404 if not found
+    sport = get_object_or_404(Sporttype, id=sport_id)
     
+    # Filter venues that have courts related to the selected sport
+    venues = Venue.objects.filter(courts__sport=sport, owner__is_approved=True).distinct()
+    
+    # Pass the sport and venues to the template
+    context = {
+        'sport': sport,
+        'venues': venues,
+    }
+    
+    return render(request, 'venues_by_sport.html', context)
+        
 class SporttypeListView(APIView):
     def get(self, request):
         sporttypes = Sporttype.objects.all() # Get the first 6 sport types
@@ -310,7 +320,7 @@ def search_venues(request):
     sporttype = request.GET.get("sporttype", "").strip()
     date = request.GET.get("date", "").strip()  # Expected format: YYYY-MM-DD
 
-    venues = Venue.objects.all()
+    venues = Venue.objects.filter(owner__is_approved=True)
 
     # Filter by location (matches city, area, or address)
     if location:
@@ -347,9 +357,10 @@ def search_results(request):
     location = request.GET.get("location", "").strip()  # Single location field
     sporttype = request.GET.get("sporttype", "").strip()
     date = request.GET.get("date", "").strip()
+    base_url = request.build_absolute_uri('/').strip('/')
 
     # Build API URL with location (can match against city, area, or address on the API side)
-    api_url = f"http://127.0.0.1:8000/api/search-venues/?sporttype={sporttype}&date={date}&location={location}"
+    api_url = f"{base_url}/api/search-venues/?sporttype={sporttype}&date={date}&location={location}"
    
 
     # Append location if provided
@@ -398,6 +409,8 @@ def location_suggestions(request):
 
 def success_page(request):
     return render(request, "success.html")
+def dashboard_success_page(request):
+    return render(request, "dashboard_sucess.html")
 
     
 
@@ -594,7 +607,7 @@ def get_messaged_customers(request):
 
 
 
-
+@login_required
 def booking_view(request, venue_id):
     venue = get_object_or_404(Venue, id=venue_id)
 
@@ -661,7 +674,7 @@ def booking_view(request, venue_id):
     
         for court in courts
     ]
-    print(courts_data)
+ 
 
     context = {
         'venue': venue,
@@ -679,6 +692,99 @@ def booking_view(request, venue_id):
 
 
 
+
+
+@login_required
+@user_passes_test(lambda u: hasattr(u, 'venue_owner_profile'))
+def venue_owner_booking_view(request, venue_id=None):
+    # Fetch all venues owned by the venue owner
+    venues = Venue.objects.filter(owner=request.user.venue_owner_profile)
+    
+    # If a specific venue is selected, use it; otherwise, use the first venue
+    if venue_id:
+        venue = get_object_or_404(Venue, id=venue_id, owner=request.user.venue_owner_profile)
+    else:
+        venue = venues.first()
+
+    # Handle selected sport (filtering courts)
+    selected_sport_id = request.GET.get('sport_id')
+    if selected_sport_id:
+        try:
+            selected_sport_id = int(selected_sport_id)
+        except (ValueError, TypeError):
+            selected_sport_id = None
+
+    # Fetch courts, optionally filtering by sport
+    courts_query = Court.objects.filter(venue=venue).select_related('sport')
+    if selected_sport_id:
+        courts_query = courts_query.filter(sport_id=selected_sport_id)
+
+    # Order courts by court_number
+    courts = courts_query.order_by('court_number')
+
+    # Fetch distinct sports available at the venue (for dropdown filter)
+    distinct_sports = Sporttype.objects.filter(courts__venue=venue).distinct()
+
+    # Collect and deduplicate all available time slots across all courts
+    time_slots = set()
+    for court in courts:
+        slots = court.generate_time_slots()
+        for start, _ in slots:
+            time_slots.add(start.strftime('%I:%M %p'))  # Format as '06:00 AM'
+
+    # Convert to sorted list using proper 24-hour time conversion
+    def convert_to_24hr(time_str):
+        return datetime.strptime(time_str, "%I:%M %p")
+
+    time_slots = sorted(time_slots, key=convert_to_24hr)
+
+    # Handle selected date (default to today, ensure valid date)
+    selected_date_str = request.GET.get('date', date.today().isoformat())
+    selected_date = parse_date(selected_date_str) or date.today()
+
+    # Fetch bookings for the selected date
+    bookings = Booking.objects.filter(
+        court__venue=venue,
+        date=selected_date
+    ).select_related('court')
+
+    # Create a map of booked slots (time -> [court_numbers])
+    booked_slots = {}
+    for booking in bookings:
+        slot_time = booking.start_time.strftime('%I:%M %p')
+        if slot_time not in booked_slots:
+            booked_slots[slot_time] = []
+        booked_slots[slot_time].append(booking.court.court_number)
+
+    # Convert courts to JSON-friendly data
+    courts_data = [
+        {
+            'id': court.id,
+            'court_number': court.court_number,
+            'sport_id': court.sport.id,
+            'sport_name': court.sport.name,
+            'price': float(court.price),  # Convert Decimal to float for JSON
+            'duration': court.duration
+        }
+        for court in courts
+    ]
+
+    context = {
+        'venue': venue,
+        'venues': venues,  # Pass all venues to the template
+        'time_slots_json': json.dumps(time_slots),
+        'courts_json': json.dumps(courts_data),
+        'booked_slots_json': json.dumps(booked_slots),
+        'distinct_sports': distinct_sports,
+        'selected_date': selected_date.isoformat(),
+        'selected_sport_id': selected_sport_id,
+        'today': date.today().isoformat(),  # For datepicker `min`
+        'max_date': venue.end_date.isoformat() if venue.end_date else None  # For datepicker `max`
+    }
+
+    return render(request, 'booking_change_form.html', context)
+
+
 class GetBookingsView(APIView):
     def get(self, request, *args, **kwargs):
         # Get the selected date and sport_id from the request
@@ -687,7 +793,7 @@ class GetBookingsView(APIView):
         # pdb.set_trace()
         selected_date_str = request.query_params.get('date')
         sport_id = request.query_params.get('sport_id')
-        print(f"Selected Date: {selected_date_str}, Sport ID: {sport_id}") 
+       
 
         # Parse the selected date
         try:
@@ -703,7 +809,7 @@ class GetBookingsView(APIView):
 
         # Fetch all courts for the selected sport
         courts = Court.objects.filter(sport_id=sport_id).values_list('court_number', flat=True)
-        print(f"Courts for Sport ID {sport_id}: {list(courts)}")
+       
 
         # Fetch bookings for the selected date and sport
         bookings = Booking.objects.filter(date=selected_date,court__sport_id=sport_id, booking_status='confirmed').select_related('court')
@@ -713,8 +819,7 @@ class GetBookingsView(APIView):
         for booking in bookings:
             start_time = booking.start_time
             end_time = booking.end_time
-            print(f"Booking: Court {booking.court.court_number}, Start: {start_time}, End: {end_time}")  # Debugging
-
+           
             # Generate all time slots between start_time and end_time
             current_time = start_time
             while current_time < end_time:
@@ -733,17 +838,57 @@ class GetBookingsView(APIView):
 
 class BookingCreateAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        
-        print("Received data:", request.data)  # Debugging
-
-        try:
-            customer_profile = CustomerProfile.objects.get(user=request.user)
-        except CustomerProfile.DoesNotExist:
-            return Response({'error': 'Customer profile not found'}, status=status.HTTP_400_BAD_REQUEST)
-
         mutable_data = request.data.copy()
-        mutable_data['customer'] = customer_profile.id  # Inject customer id from logged-in user
-        mutable_data['booking_status'] = 'confirmed' 
+
+        # Check if the user is a venue owner
+        is_venue_owner = hasattr(request.user, 'venue_owner_profile')
+
+        if is_venue_owner:
+            # Venue owner is creating a booking for a customer
+            if 'customer_name' in mutable_data and mutable_data['customer_name']:
+                customer_name = mutable_data['customer_name']
+
+                # Generate a temporary username
+                temp_username = customer_name.lower().replace(" ", "_") 
+
+                # Create a new User object
+                user, created = User.objects.get_or_create(
+                    username=temp_username, 
+                    defaults={
+                        "first_name": customer_name.split()[0],  
+                        "last_name": " ".join(customer_name.split()[1:]) if " " in customer_name else "",
+                    }
+                )
+
+                # Create a CustomerProfile if needed
+                customer_profile, _ = CustomerProfile.objects.get_or_create(user=user)
+
+                # Assign customer profile to the booking
+                mutable_data['customer'] = customer_profile.id
+
+                # Assign the venue owner to the booking
+                mutable_data['venue_owner'] = request.user.venue_owner_profile.id
+
+            else:
+                return Response({'error': 'Customer information is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            # Regular customer is creating a booking
+            if request.user.is_authenticated:
+                try:
+                    customer_profile = CustomerProfile.objects.get(user=request.user)
+                except CustomerProfile.DoesNotExist:
+                    customer_profile = CustomerProfile.objects.create(user=request.user)
+
+                # Assign customer profile to the booking
+                mutable_data['customer'] = customer_profile.id
+
+            else:
+                return Response({'error': 'Authentication required for customers.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Set the booking status to confirmed
+        mutable_data['booking_status'] = 'confirmed'
+
         # Validate and save the booking
         serializer = BookingSerializer(data=mutable_data)
         if serializer.is_valid():
@@ -755,22 +900,18 @@ class BookingCreateAPIView(APIView):
                     date=mutable_data['date'],
                     start_time__lt=mutable_data['end_time'],
                     end_time__gt=mutable_data['start_time'],
-                    booking_status__in=['pending', 'confirmed'], # Ignore cancelled or completed bookings
-                    mode_of_pyment__in=['online', 'offline']
+                    booking_status__in=['pending', 'confirmed'],  
                 ).exists()
 
                 if overlapping_bookings:
                     return Response({'error': 'This court is already booked for the selected time slot.'}, status=status.HTTP_400_BAD_REQUEST)
 
+                # Save the booking
                 serializer.save()
-                print("Booking saved:", serializer.data)  # Debugging
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Court.DoesNotExist:
                 return Response({'error': 'Court not found'}, status=status.HTTP_400_BAD_REQUEST)
-            except ValidationError as e:
-                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            print("Serializer errors:", serializer.errors)  # Debugging
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         
@@ -792,3 +933,144 @@ def venue_policy_view(request, venue_id):
     
 
     return render(request, 'venue_policy.html', {'results': results})
+
+
+
+def register_venue_add(request, user_id):
+    """Venue addition view with user ID pre-filled."""
+    sports = Sporttype.objects.all()
+    
+    try:
+        venue_owner = User.objects.get(id=user_id)  # Get venue owner by ID
+        venue_owner_profile = venue_owner.venue_owner_profile
+    except User.DoesNotExist:
+        messages.error(request, "Venue owner not found.")
+        return redirect('SportMeetApp:register-venue')  # Redirect to avoid errors
+
+    if request.method == 'POST':
+        form = VenueForm(request.POST, request.FILES)
+        if form.is_valid():
+            venue = form.save(commit=False)
+            venue.owner = venue_owner_profile  # Assign owner dynamically
+            venue.save()
+
+            # Save venue images
+            images = request.FILES.getlist('images')
+            VenueImage.objects.bulk_create([VenueImage(venue=venue, image=image) for image in images])
+
+            # Save court requests
+            try:
+                sport = Sporttype.objects.get(id=request.POST['sport'])
+                CourtRequest.objects.create(
+                    venue=venue,
+                    sport=sport,
+                    court_count=int(request.POST['court_count']),
+                    price=float(request.POST['price']),
+                    duration=int(request.POST['duration'])
+                )
+            except Sporttype.DoesNotExist:
+                messages.error(request, "Invalid sport type selected.")
+                return redirect('register_venue_add', user_id=user_id)
+
+            # **Do not regenerate token if already created in serializer**
+            if not venue_owner.is_active:  # Only send verification if user is not yet verified
+                token = EmailVerificationToken.objects.filter(user=venue_owner).first()
+                if token:  # If token exists, reuse it
+                    send_verification_email(request,venue_owner, token.token)
+
+            messages.success(request, 'Venue added successfully!')
+            return redirect('SportMeetApp:approval')  # Redirect to venue list page
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = VenueForm()
+
+    return render(request, 'venue_add_register.html', {
+        'form': form,
+        'sports': sports,
+        'user_id': user_id,
+        'venue_owner_profile': venue_owner_profile
+    })
+
+
+
+
+
+def dashboard(request):
+    # Generate a list of months for the dropdown
+    user = request.user
+    months = []
+    current_date = datetime.now()
+    for i in range(12):  # Last 12 months
+        month = current_date.strftime('%Y-%m')
+        months.append(month)
+        current_date = current_date.replace(day=1) - timedelta(days=1)  # Move to previous month
+    
+    if user.is_superuser :  # Admin or staff can see all venues
+        venues = Venue.objects.filter(owner__is_approved=True)
+    else:  # Venue owner can only see their own venues
+        venue_owner = VenueOwnerProfile.objects.get(user=user)
+        venues = Venue.objects.filter(owner=venue_owner) 
+    
+    current_month = datetime.now().strftime('%Y-%m')  # Current month in YYYY-MM format
+    return render(request, 'dashboard.html', {'venues': venues, 'months': months, 'current_month': current_month})
+
+def get_total_revenue(request):
+    user = request.user
+
+    if user.is_superuser:  # Admin can see revenue for all venues
+        total_revenue = Booking.objects.aggregate(total_revenue=Sum('price'))['total_revenue'] or 0
+    else:
+        venue_owner = VenueOwnerProfile.objects.filter(user=user).first()
+        if venue_owner:
+            total_revenue = Booking.objects.filter(venue__owner=venue_owner).aggregate(total_revenue=Sum('price'))['total_revenue'] or 0
+        else:
+            total_revenue = 0  # If user is not a venue owner, revenue is 0
+
+    return JsonResponse({'total_revenue': total_revenue})
+
+def get_total_users(request):
+    total_users = CustomerProfile.objects.count()
+    return JsonResponse({'total_users': total_users})
+
+def get_total_venues(request):
+    user = request.user
+    
+    if user.is_superuser:  # Admin can see all approved venues
+        total_venues = Venue.objects.filter(owner__is_approved=True).count()
+    else:
+        venue_owner = VenueOwnerProfile.objects.filter(user=user).first()
+        if venue_owner:
+            total_venues = Venue.objects.filter(owner=venue_owner).count()
+        else:
+            total_venues = 0  # If the user is not a venue owner, return 0
+
+    return JsonResponse({'total_venues': total_venues})
+
+def get_daywise_bookings(request, venue_id, month):
+    # Fetch day-wise bookings for the selected venue and month
+    bookings = Booking.objects.filter(venue_id=venue_id, date__startswith=month).values('date').annotate(total_bookings=Count('id'))
+    
+    # Prepare data for the chart
+    data = {}
+    for booking in bookings:
+        # booking['date'] is already a datetime.date object
+        day = booking['date'].strftime('%Y-%m-%d')  # Format as string
+        data[day] = booking['total_bookings']
+    
+    return JsonResponse(data)
+
+def get_weekwise_revenue(request, venue_id, month):
+    # Fetch week-wise revenue for the selected venue and month
+    bookings = Booking.objects.filter(venue_id=venue_id, date__startswith=month).values('date').annotate(total_revenue=Sum('price'))
+    
+    # Prepare data for the chart
+    weekly_data = {}
+    for booking in bookings:
+        # booking['date'] is already a datetime.date object
+        week = booking['date'].isocalendar()[1]  # Get ISO week number
+        if week not in weekly_data:
+            weekly_data[week] = 0
+        weekly_data[week] += booking['total_revenue']
+    
+    return JsonResponse(weekly_data)

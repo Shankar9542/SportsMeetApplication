@@ -32,10 +32,12 @@ def send_booking_reminder_email(user_email, user_name, venue_name):
     send_mail(subject, message, settings.EMAIL_HOST_USER, [user_email])
     
     
-def send_verification_email(user, token):
-    # Add a redirect parameter to the verification URL
-    verification_url = f"{settings.FRONTEND_URL}/verify-email/{token}/?redirect=/login/"
+def send_verification_email(request,user, token):
+    base_url = request.build_absolute_uri('/').strip('/')  # Example: http://127.0.0.1:8000 or https://yourdomain.com
     
+    # Construct the verification URL
+    verification_url = f"{base_url}/verify-email/{token}/?redirect=/login/"
+
     subject = "Verify Your Email Address"
     message = f"""
     Hi {user.first_name},

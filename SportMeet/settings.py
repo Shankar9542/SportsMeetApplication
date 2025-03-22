@@ -91,8 +91,8 @@ WSGI_APPLICATION = 'SportMeet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sample',  # Set to your database name
-        'USER': 'postgres',
+        'NAME': 'sai',  # Set to your database name
+        'USER': 'sai',
         'PASSWORD': 'password',
         'HOST': 'localhost',  # Set to your database host
         'PORT': '5432',       # Default PostgreSQL port

@@ -15,11 +15,10 @@ User = get_user_model()
 class RegisterSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
-    is_owner = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "username", "email", "phone", "password", "confirm_password", "is_owner"]
+        fields = ["first_name", "last_name", "username", "email", "phone", "password", "confirm_password"]
 
     def validate(self, data):
         if data['password'] != data['confirm_password']:
@@ -28,33 +27,76 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Username already taken.")
         if User.objects.filter(email=data['email']).exists():
             raise serializers.ValidationError("Email already registered.")
+        phone = data.get("phone", "")
+        if not phone.isdigit() or len(phone) != 9:
+            raise serializers.ValidationError({"phone": "Phone number must be exactly 9 digits."})
         return data
 
     def create(self, validated_data):
+        request = self.context.get("request")
         phone = validated_data.pop('phone')
-        is_owner = validated_data.pop('is_owner')
         validated_data.pop('confirm_password')
 
-        validated_data['is_active'] = False
-        validated_data['is_staff'] = True  # Set staff status to True for both owner and customer
-        
+        validated_data['is_active'] = False  # User needs email verification
+        validated_data['is_staff'] = True
         user = User.objects.create_user(**validated_data)
         user.save()
 
-        if is_owner:
-            VenueOwnerProfile.objects.create(user=user, phone=phone)
-        else:
-            CustomerProfile.objects.create(user=user, phone=phone)
+        # Create a customer profile
+        CustomerProfile.objects.create(user=user, phone=f"+61{phone}")
 
         # Create email verification token
         token = EmailVerificationToken.objects.create(user=user)
 
         # Send email verification
-        send_verification_email(user, token.token)
+        send_verification_email(request,user, token.token)
 
         return user
 
+class VenueOwnerRegisterSerializer(serializers.ModelSerializer):
+    phone = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
 
+    class Meta:
+        model = User
+        fields = ["username", "email", "phone", "password", "confirm_password"]
+
+    def validate(self, data):
+        """Validate passwords, username, email, and phone number."""
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+        if User.objects.filter(username=data['username']).exists():
+            raise serializers.ValidationError({"username": "Username already taken."})
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError({"email": "Email already registered."})
+
+        phone = data.get("phone", "")
+        if not phone.isdigit() or len(phone) != 9:
+            raise serializers.ValidationError({"phone": "Phone number must be exactly 9 digits."})
+
+        return data
+
+    def create(self, validated_data):
+        """Create user and venue owner profile."""
+        request = self.context.get("request")
+        phone = validated_data.pop('phone')
+        validated_data.pop('confirm_password')
+
+        validated_data['is_active'] = False  # Needs email verification
+        validated_data['is_staff'] = True  # Owners are staff
+
+        user = User.objects.create_user(**validated_data)
+        user.save()
+        
+        # Save phone number with +61 prefix in backend
+        VenueOwnerProfile.objects.create(user=user, phone=f"+61{phone}")
+
+        # Create email verification token
+        token = EmailVerificationToken.objects.create(user=user)
+        send_verification_email(request,user, token.token)
+
+        return user
+       
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -109,8 +151,6 @@ class CourtSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['id', 'customer', 'venue', 'sport', 'court', 'date', 'start_time', 'end_time', 'price', 'booking_status','mode_of_pyment']
+        fields = ['id', 'customer', 'venue', 'sport', 'court', 'date', 'start_time', 'end_time', 'price', 'booking_status', 'mode_of_payment']
 
-
- 
- 
+    

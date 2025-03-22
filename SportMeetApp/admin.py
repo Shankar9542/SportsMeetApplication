@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django import forms
+from django.http import HttpResponseRedirect
 from .models import *
 from django.utils import timezone
 from django.contrib.auth.admin import UserAdmin
@@ -14,6 +15,9 @@ from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 from django.db.models import Avg, OuterRef, Subquery,Count
 from .models import Rating
+from .utils.email_utils import send_verification_email
+from.views import *
+from django.contrib.admin import AdminSite
 
 class VenueImageInline(admin.StackedInline):
     model = VenueImage
@@ -125,9 +129,10 @@ class CancellationAndRefundInline(admin.StackedInline):
 
 class BookingAdmin(admin.ModelAdmin):
     model = Booking
-    list_display =['id', 'venue', 'court_number', 'date', 'price', 'start_time', 'end_time', 'mode_of_pyment',"actions_column"]
+    list_display =['booking_id', 'venue', 'court_number', 'date', 'price', 'start_time', 'end_time', 'mode_of_payment',"actions_column"]
     search_fields = ('venue__name', 'customer__user__username',  'court__court_number') 
-    list_filter = ('booking_status', 'venue', 'court')
+    list_filter = ('booking_status', 'venue', 'date')
+    list_per_page=50
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -179,7 +184,14 @@ class BookingAdmin(admin.ModelAdmin):
     actions_column.short_description = mark_safe(
         '<a href="#" onclick="return false;">Actions</a>'
     )
-
+    
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('venue-owner-booking-view/', venue_owner_booking_view, name='venue-owner-booking-view'),
+        ]
+        return custom_urls + urls
+ 
     
 class CourtAdmin(admin.ModelAdmin):
     model = Court
@@ -369,7 +381,7 @@ class VenueAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "owner":
-            kwargs["label"] = "Venue Owner"
+            kwargs["label"] = "ID"
             if request.user.is_superuser:
                 kwargs["queryset"] = VenueOwnerProfile.objects.all()  # Allow superuser to see all owners
             else:
@@ -382,13 +394,18 @@ class VenueAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
     def get_inline_instances(self, request, obj=None):
-        """
-        Show CourtRequestInline only when adding a new venue.
-        Show CourtInline only when editing an existing venue.
-        """
+        inlines = []
+        
         if obj is None:  # When adding a new venue
-            return [CourtRequestInline(self.model, self.admin_site)]
-        return [CourtInline(self.model, self.admin_site)] 
+            inlines.append(CourtRequestInline(self.model, self.admin_site))
+        else:  # When editing an existing venue
+            inlines.append(CourtInline(self.model, self.admin_site))
+
+        # Always include VenueImageInline
+        inlines.append(VenueImageInline(self.model, self.admin_site))
+        inlines.append(CancellationAndRefundInline(self.model, self.admin_site))
+
+        return inlines
     
     def actions_column(self, obj):
         # Debugging: Check if obj.id is valid
@@ -418,11 +435,46 @@ class VenueAdmin(admin.ModelAdmin):
     actions_column.short_description = mark_safe(
         '<a href="#" onclick="return false;">Actions</a>'
     ) 
+    
+    # def has_add_permission(self, request):
+    #     """Only allow users with the 'add_venue' permission to add venues."""
+    #     return request.user.has_perm('SportMeetApp.add_venue')
+    
+    # def get_form(self, request, obj=None, **kwargs):
+    #     """Pre-fill the owner field with the logged-in user's VenueOwnerProfile."""
+    #     form = super().get_form(request, obj, **kwargs)
+    #     if not obj:  # Only when adding a new venue
+    #         try:
+    #             venue_owner_profile = request.user.venue_owner_profile
+    #             form.base_fields['owner'].initial = venue_owner_profile
+    #         except AttributeError:
+    #             pass  # Handle the case where the user doesn't have a VenueOwnerProfile
+    #     return form
+    # def save_model(self, request, obj, form, change):
+    #     """
+    #     Override the save_model method to trigger email verification after saving the venue.
+    #     """
+    #     # Save the venue first
+    #     super().save_model(request, obj, form, change)
+
+    #     # If the venue is being added (not changed), trigger email verification
+    #     if not change:
+    #         user = obj.owner.user  # Get the user associated with the venue owner
+    #         token = EmailVerificationToken.objects.create(user=user)
+    #         send_verification_email(user, token.token)
+    #         messages.success(request, "Venue details saved successfully! Please check your email to verify your account.")
+
+    # def response_add(self, request, obj, post_url_continue=None):
+    #     """
+    #     Override the response after adding a venue to redirect to the home page.
+    #     """
+    #     return HttpResponseRedirect(reverse('approval_page'))  # Redirect to home page
+
 
     
 # Registering models
 class VenueOwnerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user__id','user', 'phone','user__email', 'is_approved', 'created_at', 'actions_column')
+    list_display = ('id','user', 'phone','user__email', 'is_approved', 'created_at', 'actions_column')
     list_filter = ['is_approved']
     search_fields = ('user__username', 'user__email', 'phone')  
     actions = ['approve_venue_owners']
@@ -479,7 +531,7 @@ class VenueOwnerProfileAdmin(admin.ModelAdmin):
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
     list_display = ['id','user', 'phone', 'user__email', 'actions_column']
-    list_filter = ['user__username','user__email']
+    # list_filter = ['user__username','user__email']
     search_fields = ['user__username', 'user__email', 'phone']
     
     
@@ -609,6 +661,7 @@ admin.site.register(User, CustomUserAdmin)
 
     
 admin.site.register(Venue, VenueAdmin)
+admin.site.register(CancellationAndRefund)
 admin.site.register(VenueImage)
 admin.site.register(Court,CourtAdmin)
 admin.site.register(Sporttype, SportAdmin)

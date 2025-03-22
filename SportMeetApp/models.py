@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Avg
 import uuid
 from ckeditor.fields import RichTextField
+import random
 # Email Verification
 class EmailVerificationToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -14,7 +15,7 @@ class EmailVerificationToken(models.Model):
 # Customer Profile
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer_profile",verbose_name="Customer Name")
-    phone = models.CharField(max_length=15, blank=True, null=True,verbose_name="Mobile")
+    phone = models.CharField(max_length=12, blank=True, null=True,verbose_name="Mobile")
     profile_picture = models.ImageField(upload_to="profiles/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -23,15 +24,24 @@ class CustomerProfile(models.Model):
 
 
 # Venue Owner Profile
+def generate_unique_id():
+    """Generate a unique 6-digit ID for VenueOwnerProfile."""
+    while True:
+        unique_id = random.randint(100000, 999999)
+        if not VenueOwnerProfile.objects.filter(id=unique_id).exists():
+            return unique_id
+
 class VenueOwnerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="venue_owner_profile",verbose_name="Venue profile")
-    phone = models.CharField(max_length=15, blank=True, null=True,verbose_name="Mobile")
+    id = models.PositiveIntegerField(primary_key=True, default=generate_unique_id, editable=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="venue_owner_profile", verbose_name="Venue profile")
+    phone = models.CharField(max_length=12, blank=True, null=True, verbose_name="Mobile")
     profile_picture = models.ImageField(upload_to="profiles/", blank=True, null=True)
-    is_approved = models.BooleanField(default=False,verbose_name="Approved")
+    is_approved = models.BooleanField(default=False, verbose_name="Approved")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.get_full_name()}({'Approved' if self.is_approved else 'Pending'})"
+        # return f"{self.id} ({'Approved' if self.is_approved else 'Pending'})"
+        return f"{self.id}"
 
     def approve(self):
         """Approve the venue owner and grant staff permissions."""
@@ -39,6 +49,8 @@ class VenueOwnerProfile(models.Model):
         self.user.is_staff = True  # Grant staff privileges
         self.user.save()
         self.save()
+        
+        
 class Sporttype(models.Model):
     name=models.CharField(max_length=255,null=True,blank=True)
     image=models.ImageField(blank=True,null=True,upload_to='court_images/')
@@ -56,7 +68,7 @@ class Banner(models.Model):
     
 # Venue Model
 class Venue(models.Model):
-    owner = models.ForeignKey(VenueOwnerProfile, on_delete=models.CASCADE, related_name="venues",verbose_name="Venue Owner")
+    owner = models.ForeignKey(VenueOwnerProfile, on_delete=models.CASCADE, related_name="venues",verbose_name="ID")
     name = models.CharField(max_length=255,verbose_name="Venue Name")
     description = models.TextField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -185,28 +197,52 @@ class Booking(models.Model):
     
     PAYMENT_MODE_CHOICES = [
         ('online', 'Online'),
-        ('offline', 'offline'),
+        ('offline', 'Offline'),
     ]
 
-    customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="bookings")
+    customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="bookings")
     sport = models.ForeignKey(Sporttype, on_delete=models.CASCADE, related_name="bookings")
     court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name="bookings")
 
-    date = models.DateField()  # Date of booking
-    start_time = models.TimeField()  # Selected slot start time
-    end_time = models.TimeField()  # Selected slot end time
+    date = models.DateField()  
+    start_time = models.TimeField()  
+    end_time = models.TimeField()  
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     booking_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    mode_of_pyment = models.CharField(max_length=10, choices=PAYMENT_MODE_CHOICES, default='online',verbose_name="Mode of Payment")
+    mode_of_payment = models.CharField(max_length=10, choices=PAYMENT_MODE_CHOICES, default='online', verbose_name="Mode of Payment")
     created_at = models.DateTimeField(auto_now_add=True)
+    booking_id = models.CharField(max_length=10, unique=True, blank=True, editable=False,null=True,verbose_name="Booking Id")
+
+    
 
     class Meta:
         unique_together = ['court', 'date', 'start_time', 'end_time']
+        
+    def save(self, *args, **kwargs):
+        # Generate a unique booking_id if it doesn't exist
+        if not self.booking_id:
+            while True:
+                # Generate a 6-digit random number
+                random_number = random.randint(100000, 999999)
+                booking_id = f"SM-{random_number}"
+                
+                # Check if the generated booking_id is unique
+                if not Booking.objects.filter(booking_id=booking_id).exists():
+                    self.booking_id = booking_id
+                    break
+        
+        # Call the parent class's save method
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.court.court_number}"
+         return f"Booking for {self.venue.name}"
+        
+    
+
+   
+
 
     
 
@@ -225,5 +261,8 @@ class CancellationAndRefund(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     cancellationpolicy = RichTextField(null=True, blank=True)
     refundpolicy = RichTextField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.venue.name}"
     
    

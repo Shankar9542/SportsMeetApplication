@@ -10,6 +10,9 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('api/register-user/', RegisterUserView.as_view(), name='register-user'),
     path('register/', register_view, name='register'),
+    path('register-venue/', register_venue, name='register-venue'),
+    path('register/venue/add/<int:user_id>/', register_venue_add, name='register-add-venue'),
+    path('register-owner/',VenueOwnerRegisterView.as_view(),name='register-owner'),
     path('registration_success/',registration_success, name='registration_success'),
     path('verify-email/<uuid:token>/', VerifyEmailView.as_view(), name='verify-email'),
     path('login/', views.user_login, name='login'),
@@ -23,17 +26,16 @@ urlpatterns = [
     path('sports_venue', sports_venue, name='sports-venue'),
     path('venues/<int:venue_id>/', VenueDetailView.as_view(), name='venue-detail'),
     path('booking-view/<int:venue_id>/', booking_view, name='booking-view'),
+    path('venue-owner-booking-view/', venue_owner_booking_view, name='venue-owner-booking-view'),
+    path('venue-owner-booking-view/<int:venue_id>/', venue_owner_booking_view, name='venue-owner-booking-view-with-id'),
     path('api/get_bookings/', GetBookingsView.as_view(), name='get_bookings'),
     path('api/bookings/', BookingCreateAPIView.as_view(), name='bookings'),
-    # path('api/book/', book_venue, name='book_venue'),
-    # path('api/check-availability/', check_availability, name='check_availability'),
-    # path('api/courts/<int:venue_id>/<int:sport_id>/', get_courts_by_sport_and_venue, name="api_get_courts"),
-    # path('api/available-dates/', available_dates, name='available_dates'),
     path('api/password-reset/', send_password_reset_email, name='password-reset'),
     path("api/password-reset-confirm/<uidb64>/<token>/", reset_password_confirm, name="password_reset_confirm"),
     path('password_reset/', password_reset_view, name='password_reset'),
     path('reset-password/<uidb64>/<token>/', password_reset_confirm_view, name='password-reset-form'),
     path('success/', success_page, name='success'),
+    path('dashboard-success/', dashboard_success_page, name='dashboard-success'),
     path('venues/<int:venue_id>/submit_review/', ReviewListCreateView.as_view(), name='submit_review'),
     path('test-emails/', test_booking_emails),
     path('api/location-suggestions/', location_suggestions, name='location-suggestions'),
@@ -44,7 +46,18 @@ urlpatterns = [
     path('get_messaged_customers/', views.get_messaged_customers, name='get_messaged_customers'),
     path('customer-dashboard/',customer_dashboard,name="customer-dashboard"),
     path('venue/<int:venue_id>/policy/', venue_policy_view, name='venue_policy'),
-    # path('sports/<int:sport_id>/venues-list/', SportVenuesListView.as_view(), name='sports-venues-list'),
+    path('sports/<int:sport_id>/venues/', views.venues_by_sport, name='venues_by_sport'),
+    
+    path('dashboard/', views.dashboard, name='dashboard'),
+
+    # API Endpoints
+    path('get_total_revenue/', views.get_total_revenue, name='get_total_revenue'),
+    path('get_total_users/', views.get_total_users, name='get_total_users'),
+    path('get_total_venues/', views.get_total_venues, name='get_total_venues'),
+    path('get_daywise_bookings/<int:venue_id>/<str:month>/', views.get_daywise_bookings, name='get_daywise_bookings'),
+    path('get_weekwise_revenue/<int:venue_id>/<str:month>/', views.get_weekwise_revenue, name='get_weekwise_revenue'),
+  
+   
 ]
     
     

@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/search-venues/", search_venues, name="search_venues"),
     path("search-results/", search_results, name="search_results"),
     path('sports_venue', sports_venue, name='sports-venue'),
+    path('admin-logout/', admin_logout, name='admin-logout'),
     path('venues/<int:venue_id>/', VenueDetailView.as_view(), name='venue-detail'),
     path('booking-view/<int:venue_id>/', booking_view, name='booking-view'),
     path('venue-owner-booking-view/', venue_owner_booking_view, name='venue-owner-booking-view'),

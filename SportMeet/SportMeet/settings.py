@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x=o85$(^r20pz6nk@4(vgq3d9h0gjkj&djopt3(8@j(d&6^rsr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['98.80.11.169']
 SITE_ID=1
 
 
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'SportMeet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sample',  # Set to your database name
+        'NAME': 'sai',  # Set to your database name
         'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',  # Set to your database host

@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'SportMeet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sai',  # Set to your database name
+        'NAME': 'postgres',  # Set to your database name
         'USER': 'sai',
         'PASSWORD': 'password',
         'HOST': 'localhost',  # Set to your database host

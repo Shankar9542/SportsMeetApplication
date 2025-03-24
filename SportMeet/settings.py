@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x=o85$(^r20pz6nk@4(vgq3d9h0gjkj&djopt3(8@j(d&6^rsr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['98.80.11.169']
+ALLOWED_HOSTS = ['44.202.66.191']
 SITE_ID=1
 
 
@@ -92,7 +92,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sai',  # Set to your database name
-        'USER': 'postgres',
+        'USER': 'sai',
         'PASSWORD': 'password',
         'HOST': 'localhost',  # Set to your database host
         'PORT': '5432',       # Default PostgreSQL port

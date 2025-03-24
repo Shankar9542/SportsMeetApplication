@@ -140,7 +140,6 @@ class RegisterUserView(generics.CreateAPIView):
                 'error': errors
             }, status=status.HTTP_400_BAD_REQUEST)
 
-
   
 def register_view(request):
     return render(request, "register.html")
@@ -245,7 +244,9 @@ def user_logout(request):
 
 
 
-
+def admin_logout(request):
+    logout(request)
+    return redirect("admin:login")
 
 class VenueListView(APIView):
     def get(self, request):

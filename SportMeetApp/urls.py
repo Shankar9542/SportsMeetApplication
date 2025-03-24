@@ -47,6 +47,7 @@ urlpatterns = [
     path('customer-dashboard/',customer_dashboard,name="customer-dashboard"),
     path('venue/<int:venue_id>/policy/', venue_policy_view, name='venue_policy'),
     path('sports/<int:sport_id>/venues/', views.venues_by_sport, name='venues_by_sport'),
+    # path('api/validate_coupon/', ValidateCouponAPIView.as_view(), name='validate_coupon'),
     
     path('dashboard/', views.dashboard, name='dashboard'),
 

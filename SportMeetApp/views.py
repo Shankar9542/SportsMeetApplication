@@ -195,7 +195,8 @@ def user_login(request):
         try:
             user = User.objects.get(email=email)  # Fetch user by email
         except User.DoesNotExist:
-            return HttpResponse("User with this email does not exist.")
+            messages.error(request, "User with this email does not exist.")
+            return redirect("SportMeetApp:login")  # Redirect back to the login page
 
         # Authenticate the user
         user = authenticate(request, username=user.username, password=password)
@@ -206,6 +207,7 @@ def user_login(request):
                 venue_owner_profile = VenueOwnerProfile.objects.get(user=user)
                 if not venue_owner_profile.is_approved:
                     # If not approved, show a message
+                    messages.info(request, "Your account is pending approval.")
                     return redirect("SportMeetApp:approval")  # Redirect to the approval page
                 else:
                     # If approved, redirect to the dashboard
@@ -224,9 +226,11 @@ def user_login(request):
                     return redirect("SportMeetApp:home")  # Redirect to the home page
                 except CustomerProfile.DoesNotExist:
                     # If the user is neither a venue owner nor a customer, handle accordingly
-                    return HttpResponse("User profile not found.")
+                    messages.error(request, "User profile not found.")
+                    return redirect("SportMeetApp:login")  # Redirect back to the login page
         else:
-            return HttpResponse("Invalid credentials.")
+            messages.error(request, "Invalid credentials.")
+            return redirect("SportMeetApp:login")  # Redirect back to the login page
 
     return render(request, "login.html")
 
@@ -678,6 +682,7 @@ def booking_view(request, venue_id):
 
     context = {
         'venue': venue,
+        'discount':venue.discount,
         'time_slots_json': json.dumps(time_slots),
         'courts_json': json.dumps(courts_data),
         'booked_slots_json': json.dumps(booked_slots),
@@ -771,6 +776,7 @@ def venue_owner_booking_view(request, venue_id=None):
 
     context = {
         'venue': venue,
+        'discount':venue.discount,
         'venues': venues,  # Pass all venues to the template
         'time_slots_json': json.dumps(time_slots),
         'courts_json': json.dumps(courts_data),
@@ -1074,3 +1080,19 @@ def get_weekwise_revenue(request, venue_id, month):
         weekly_data[week] += booking['total_revenue']
     
     return JsonResponse(weekly_data)
+
+# from django.contrib.auth import views as auth_views
+# def custom_admin_login(request):
+#     """
+#     Custom admin login view that redirects to 'SportmeetApp:dashboard' after login.
+#     """
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None and user.is_staff:
+#             login(request, user)
+#             # Redirect to 'SportmeetApp:dashboard'
+#             return redirect(reverse('SportmeetApp:dashboard'))
+#     # Fallback to default admin login
+#     return redirect('admin:login')

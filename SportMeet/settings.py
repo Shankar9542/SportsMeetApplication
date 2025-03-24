@@ -136,10 +136,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'SportMeetApp/static'),
-]
+
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -158,8 +155,9 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
+            'prompt': 'consent',
         },
-        'OAUTH_PKCE_ENABLED': True,
+       
     }
 }
 
@@ -174,6 +172,8 @@ AUTHENTICATION_BACKENDS= (
 
 LOGIN_REDIRECT_URL= "/home/"
 LOGOUT_REDIRECT_URL= "/login/"
+
+LOGIN_URL = '/login/'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

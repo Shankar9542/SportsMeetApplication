@@ -82,6 +82,7 @@ class Venue(models.Model):
     end_date = models.DateField()
     start_time = models.TimeField(verbose_name="Opening Hours")
     end_time = models.TimeField(verbose_name="Closing Hours")
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, verbose_name="Discount (%)")
   
     def average_rating(self):
         avg_rating = self.ratings.aggregate(avg_rating=Avg('rating'))['avg_rating']
@@ -238,14 +239,6 @@ class Booking(models.Model):
 
     def __str__(self):
          return f"Booking for {self.venue.name}"
-        
-    
-
-   
-
-
-    
-
 
 class ChatMessage(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
@@ -266,3 +259,132 @@ class CancellationAndRefund(models.Model):
         return f"{self.venue.name}"
     
    
+   
+   
+#    class Discount(models.Model):
+#     DISCOUNT_TYPE_CHOICES = [
+#         ('percentage', 'Percentage'),
+#     ]
+
+#     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="discounts", verbose_name="Venue")
+#     code = models.CharField(max_length=20, unique=True, verbose_name="Discount Code")
+#     discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPE_CHOICES, default='percentage', verbose_name="Discount Type")
+#     value = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Discount Value (%)")  # Percentage value (e.g., 10.00 for 10%)
+#     start_date = models.DateTimeField(verbose_name="Start Date")
+#     end_date = models.DateTimeField(verbose_name="End Date")
+#     max_usage = models.PositiveIntegerField(verbose_name="Maximum Usage", null=True, blank=True)
+#     current_usage = models.PositiveIntegerField(default=0, verbose_name="Current Usage")
+#     is_active = models.BooleanField(default=True, verbose_name="Is Active")
+
+#     def __str__(self):
+#         return f"{self.code} ({self.value}% off at {self.venue.name})"
+
+#     def is_valid(self):
+#         now = timezone.now()  # Get the current time in a timezone-aware format
+#         return (
+#             self.start_date <= now <= self.end_date
+#             and self.is_active
+#             and (self.max_usage is None or self.current_usage < self.max_usage)
+#         )
+
+#     def apply_discount(self, total_price):
+#         if not self.is_valid():
+#             return total_price
+
+#         if self.discount_type == 'percentage':
+#             return total_price * (1 - self.value / 100)
+
+#         return total_price
+    
+    
+    
+# class Coupon(models.Model):
+#     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="coupons", verbose_name="Venue")
+#     code = models.CharField(max_length=20, unique=True, verbose_name="Coupon Code")
+#     discount_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Discount Value (₹)")  # Fixed price discount (e.g., ₹100)
+#     start_date = models.DateTimeField(verbose_name="Start Date")
+#     end_date = models.DateTimeField(verbose_name="End Date")
+#     max_usage = models.PositiveIntegerField(verbose_name="Maximum Usage", null=True, blank=True)
+#     current_usage = models.PositiveIntegerField(default=0, verbose_name="Current Usage")
+#     is_active = models.BooleanField(default=True, verbose_name="Is Active")
+
+#     def __str__(self):
+#         return f"{self.code} (₹{self.discount_value} off at {self.venue.name})"
+
+#     def is_valid(self):
+#         now = timezone.now()  # Get the current time in a timezone-aware format
+#         return (
+#             self.start_date <= now <= self.end_date
+#             and self.is_active
+#             and (self.max_usage is None or self.current_usage < self.max_usage)
+#         )
+#     def apply_coupon(self, total_price):
+#         if not self.is_valid():
+#             return total_price
+
+#         return max(total_price - self.discount_value, 0)  # Ensure the price doesn't go below 0        
+    
+    
+
+# class Booking(models.Model):
+#     STATUS_CHOICES = [
+#         ('pending', 'Pending'),
+#         ('confirmed', 'Confirmed'),
+#         ('cancelled', 'Cancelled'),
+#         ('completed', 'Completed'),
+#     ]
+    
+#     PAYMENT_MODE_CHOICES = [
+#         ('online', 'Online'),
+#         ('offline', 'Offline'),
+#     ]
+
+#     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
+#     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="bookings")
+#     sport = models.ForeignKey(Sporttype, on_delete=models.CASCADE, related_name="bookings")
+#     court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name="bookings")
+#     discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Discount")
+#     coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Coupon")
+
+#     date = models.DateField()  
+#     start_time = models.TimeField()  
+#     end_time = models.TimeField()  
+#     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     final_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Final Price")
+
+#     booking_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+#     mode_of_payment = models.CharField(max_length=10, choices=PAYMENT_MODE_CHOICES, default='online', verbose_name="Mode of Payment")
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     booking_id = models.CharField(max_length=10, unique=True, blank=True, editable=False, null=True, verbose_name="Booking Id")
+
+#     class Meta:
+#         unique_together = ['court', 'date', 'start_time', 'end_time']
+        
+#     def save(self, *args, **kwargs):
+#         # Generate a unique booking_id if it doesn't exist
+#         if not self.booking_id:
+#             while True:
+#                 random_number = random.randint(100000, 999999)
+#                 booking_id = f"SM-{random_number}"
+#                 if not Booking.objects.filter(booking_id=booking_id).exists():
+#                     self.booking_id = booking_id
+#                     break
+        
+#         # Calculate final price after applying discount and coupon
+#         self.final_price = self.price
+
+#         # Apply discount (percentage-based)
+#         if self.discount and self.discount.is_valid():
+#             self.final_price = self.discount.apply_discount(self.final_price)
+
+#         # Apply coupon (fixed-price discount)
+#         if self.coupon and self.coupon.is_valid():
+#             self.final_price = self.coupon.apply_coupon(self.final_price)
+        
+#         # Ensure the final price doesn't go below 0
+#         self.final_price = max(self.final_price, 0)
+        
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"Booking for {self.venue.name} (ID: {self.booking_id})"

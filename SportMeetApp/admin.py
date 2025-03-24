@@ -8,7 +8,6 @@ from django.shortcuts import redirect, render
 from django.urls import NoReverseMatch, path, reverse
 from django.utils.html import format_html
 from django.contrib.auth.forms import UserChangeForm
-#from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 from django.utils.timezone import now
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -132,7 +131,7 @@ class BookingAdmin(admin.ModelAdmin):
     list_display =['booking_id', 'venue', 'court_number', 'date', 'price', 'start_time', 'end_time', 'mode_of_payment',"actions_column"]
     search_fields = ('venue__name', 'customer__user__username',  'court__court_number') 
     list_filter = ('booking_status', 'venue', 'date')
-    list_per_page=50
+    list_per_page=5
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -166,17 +165,18 @@ class BookingAdmin(admin.ModelAdmin):
             change_url = reverse("admin:SportMeetApp_booking_change", args=[obj.id])
             # Generate the URL for the delete page (delete action)
             delete_url = reverse("admin:SportMeetApp_booking_delete", args=[obj.id])
-            
-            # Material icons for "visibility" and "delete"
-            eye_icon = '<span class="material-symbols-outlined">visibility</span>'
-            delete_icon = '<span class="material-symbols-outlined">delete</span>'
-            
+
+            # Material icons with custom styling
+            eye_icon = '<span class="material-symbols-outlined" style="color: blue;">visibility</span>'
+            delete_icon = '<span class="material-symbols-outlined" style="color: red;">delete</span>'  # Red color
+
             # Wrap the icons in links to the respective pages
             view_link = format_html('<a href="{}" class="action-icon" title="View">{}</a>', change_url, format_html(eye_icon))
             delete_link = format_html('<a href="{}" class="action-icon" title="Delete">{}</a>', delete_url, format_html(delete_icon))
-            
+
             # Combine both links into a single cell
             return format_html('{} {}', view_link, delete_link)
+
         except NoReverseMatch:
             # Handle the case where the URL pattern is not found
             return "Invalid URL"
@@ -192,6 +192,16 @@ class BookingAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
  
+class CustomAdminSite(admin.AdminSite):
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('dashboard/', dashboard, name='dashboard'),
+        ]
+        return custom_urls + urls
+
+# Replace the default admin site with your custom admin site
+custom_admin_site = CustomAdminSite(name='custom_admin')
     
 class CourtAdmin(admin.ModelAdmin):
     model = Court
@@ -528,25 +538,17 @@ class VenueOwnerProfileAdmin(admin.ModelAdmin):
 
 
 
-
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'phone', 'get_email', 'actions_column']  # Fixed 'user__email'
-
-    search_fields = ['user__username', 'user__email', 'phone']  # 'user__email' is valid here
-
-    def get_email(self, obj):
-        """Fetch email from the related User model."""
-        return obj.user.email if obj.user else "No Email"
+    list_display = ['id','user', 'phone', 'user__email', 'actions_column']
+    # list_filter = ['user__username','user__email']
+    search_fields = ['user__username', 'user__email', 'phone']
     
-    get_email.short_description = 'Email'  # Admin column name
-
+    
     def actions_column(self, obj):
         # Debugging: Check if obj.id is valid
         if not obj.id:
             return "No ID"
-        return "Actions"  # Placeholder for actual actions
-
         
         try:
             # Generate the URL for the change page (view action)
@@ -677,3 +679,5 @@ admin.site.register(Banner)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(Rating, RatingAdmin)
 admin.site.register(VenueOwnerProfile, VenueOwnerProfileAdmin)
+# admin.site.register(Coupon)
+# admin.site.register(Discount)

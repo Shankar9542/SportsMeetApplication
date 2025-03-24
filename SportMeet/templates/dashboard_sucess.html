@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+ 
+        .confirmation-container {
+            text-align: center;
+            position: relative;
+        }
+ 
+        .circle-animation {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            z-index: 10;
+        }
+ 
+        .circle {
+            width: 100%;
+            height: 100%;
+        }
+ 
+        .circle-bg {
+            fill: none;
+            stroke: #e0e0e0;
+            stroke-width: 10;
+        }
+ 
+        .circle-progress {
+            fill: none;
+            stroke: #4caf50;
+            stroke-width: 10;
+            stroke-dasharray: 283; /* Circumference of the circle (2 * π * r) */
+            stroke-dashoffset: 283;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            animation: fillCircle 1s ease-in-out forwards;
+        }
+ 
+        .tick {
+            fill: none;
+            stroke: #4caf50;
+            stroke-width: 10;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawTick 0.5s ease-in-out 0.5s forwards;
+        }
+ 
+        .confirmation-text {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            z-index: 10;
+            position: relative;
+        }
+ 
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            animation: floatUp 6s ease-in infinite;
+        }
+ 
+        .balloon .ribbon {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            width: 2px;
+            height: 50px;
+            background: #ff69b4;
+            animation: sway 2s ease-in-out infinite;
+        }
+ 
+        /* Random positions for balloons */
+        .balloon:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+        }
+ 
+        .balloon:nth-child(2) {
+            left: 30%;
+            animation-delay: 1s;
+        }
+ 
+        .balloon:nth-child(3) {
+            left: 50%;
+            animation-delay: 2s;
+        }
+ 
+        .balloon:nth-child(4) {
+            left: 70%;
+            animation-delay: 3s;
+        }
+ 
+        .balloon:nth-child(5) {
+            left: 90%;
+            animation-delay: 4s;
+        }
+ 
+        @keyframes fillCircle {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+ 
+        @keyframes drawTick {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+ 
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-100vh);
+            }
+        }
+ 
+        @keyframes sway {
+            0%, 100% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <!-- Circle with Tick Mark -->
+        <div class="circle-animation">
+            <svg class="circle" viewBox="0 0 100 100">
+                <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="circle-progress" cx="50" cy="50" r="45"></circle>
+                <path class="tick" d="M20 50 L40 70 L80 30" />
+            </svg>
+        </div>
+        <div class="confirmation-text">Booking Confirmed!</div>
+ 
+        <!-- Balloons with Ribbons -->
+        <div class="balloon">
+            <svg width="50" height="70" viewBox="0 0 50 70">
+                <ellipse cx="25" cy="45" rx="15" ry="20" fill="#ff69b4" />
+                <polygon points="25,10 15,45 35,45" fill="#ff69b4" />
+            </svg>
+            <div class="ribbon"></div>
+        </div>
+        <div class="balloon">
+            <svg width="50" height="70" viewBox="0 0 50 70">
+                <ellipse cx="25" cy="45" rx="15" ry="20" fill="#ff4500" />
+                <polygon points="25,10 15,45 35,45" fill="#ff4500" />
+            </svg>
+            <div class="ribbon"></div>
+        </div>
+        <div class="balloon">
+            <svg width="50" height="70" viewBox="0 0 50 70">
+                <ellipse cx="25" cy="45" rx="15" ry="20" fill="#32cd32" />
+                <polygon points="25,10 15,45 35,45" fill="#32cd32" />
+            </svg>
+            <div class="ribbon"></div>
+        </div>
+        <div class="balloon">
+            <svg width="50" height="70" viewBox="0 0 50 70">
+                <ellipse cx="25" cy="45" rx="15" ry="20" fill="#1e90ff" />
+                <polygon points="25,10 15,45 35,45" fill="#1e90ff" />
+            </svg>
+            <div class="ribbon"></div>
+        </div>
+        <div class="balloon">
+            <svg width="50" height="70" viewBox="0 0 50 70">
+                <ellipse cx="25" cy="45" rx="15" ry="20" fill="#ffd700" />
+                <polygon points="25,10 15,45 35,45" fill="#ffd700" />
+            </svg>
+            <div class="ribbon"></div>
+        </div>
+    </div>
+ 
+    <script>
+        // Optional: Add any additional JavaScript functionality if needed.
+        // For example, you can add a delay before redirecting the user to another page.
+        setTimeout(() => {
+            // Redirect or perform any action after confirmation
+            window.location.href = "{% url 'admin:SportMeetApp_booking_changelist' %}";
+        }, 2000); // Redirect after 2 seconds
+    </script>
+</body>
+</html>

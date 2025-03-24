@@ -1,0 +1,255 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .form-select1{
+    transition: 0.2s ease;
+    {% comment %} max-width: 298px; {% endcomment %}
+    text-align: center;
+    {% comment %} margin-left: 338px; {% endcomment %}
+    background-color: #81baec;
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 10px;
+    }
+</style>
+<div class="container-fluid py-2">
+  <div class="row align-items-center mb-4">
+    <div class="col-md-4">
+    <div class="ms-3 d-flex justify-content-center">
+      <h3 class="mb-0 h4 font-weight-bolder">Dashboard</h3>
+      {% comment %} <p class="mb-4">Check the sales, value, and bounce rate by country.</p> {% endcomment %}
+    </div>
+  </div>
+ 
+     <!-- Venue Selection -->
+ 
+    <div class="col-md-4 mt-2">
+      <div class="d-flex justify-content-center">
+      <select id="venue-select" class="form-select1 mb-3">
+        <option value="">Select Venue</option>
+        {% for venue in venues %}
+        <option value="{{ venue.id }}" {% if forloop.first %}selected{% endif %}>{{ venue.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-2 ps-3">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-sm mb-0 text-capitalize">Total Revenue</p>
+              <h4 class="mb-0" id="total-revenue">$0</h4>
+            </div>
+            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+              <i class="material-symbols-rounded opacity-10">weekend</i>
+            </div>
+          </div>
+        </div>
+        {% comment %} <hr class="dark horizontal my-0">
+        <div class="card-footer p-2 ps-3">
+          <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span>than last week</p>
+        </div> {% endcomment %}
+      </div>
+    </div>
+    {% if request.user.is_superuser %}
+    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-2 ps-3">
+          <div class="d-flex justify-content-between">
+           
+
+            <div>
+              <p class="text-sm mb-0 text-capitalize">Total Users</p>
+              <h4 class="mb-0" id="total-users">0</h4>
+            </div>
+            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+              <i class="material-symbols-rounded opacity-10">person</i>
+            </div>
+            
+          </div>
+        </div>
+        {% comment %} <hr class="dark horizontal my-0">
+        <div class="card-footer p-2 ps-3">
+          <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+3% </span>than last month</p>
+        </div> {% endcomment %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-2 ps-3">
+          <div class="d-flex justify-content-between">
+            <div>
+              <p class="text-sm mb-0 text-capitalize">Total Venues</p>
+              <h4 class="mb-0" id="total-venues">0</h4>
+            </div>
+            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+              <i class="material-symbols-rounded opacity-10">leaderboard</i>
+            </div>
+          </div>
+        </div>
+        {% comment %} <hr class="dark horizontal my-0">
+        <div class="card-footer p-2 ps-3">
+          <p class="mb-0 text-sm"><span class="text-danger font-weight-bolder">-2% </span>than yesterday</p>
+        </div> {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <!-- Charts -->
+  <div class="row">
+    <div class="col-lg-6 col-md-6 mt-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="mb-0">Day-wise Bookings</h6>
+          <p class="text-sm">Bookings per day for the selected venue and month.</p>
+          <input type="month" id="month-select-bar" class="form-control mb-3" value="{{ current_month }}">
+          <div class="pe-2">
+            <div class="chart">
+              <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
+            </div>
+          </div>
+          <hr class="dark horizontal">
+          {% comment %} <div class="d-flex">
+            <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
+            <p class="mb-0 text-sm">Data updated dynamically</p>
+          </div> {% endcomment %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 col-md-6 mt-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="mb-0">Week-wise Revenue</h6>
+          <p class="text-sm">Revenue per week for the selected venue and month.</p>
+          <input type="month" id="month-select-line" class="form-control mb-3" value="{{ current_month }}">
+          <div class="pe-2">
+            <div class="chart">
+              <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
+            </div>
+          </div>
+          <hr class="dark horizontal">
+          {% comment %} <div class="d-flex">
+            <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
+            <p class="mb-0 text-sm">Data updated dynamically</p>
+          </div> {% endcomment %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+<script>
+  // Fetch and update total revenue, users, and venues
+  fetch('/get_total_revenue/')
+    .then(response => response.json())
+    .then(data => document.getElementById('total-revenue').textContent = `AUD$ ${data.total_revenue}`);
+
+  fetch('/get_total_users/')
+    .then(response => response.json())
+    .then(data => document.getElementById('total-users').textContent = data.total_users);
+
+  fetch('/get_total_venues/')
+    .then(response => response.json())
+    .then(data => document.getElementById('total-venues').textContent = data.total_venues);
+
+  // Initialize charts
+  const barChartCtx = document.getElementById('chart-bars').getContext('2d');
+  const lineChartCtx = document.getElementById('chart-line').getContext('2d');
+  let barChart, lineChart;
+
+  // Function to format date as "MMM D" (e.g., Oct 1)
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  // Function to update both charts
+  function updateCharts() {
+    const venueId = document.getElementById('venue-select').value;
+    const monthBar = document.getElementById('month-select-bar').value;
+    const monthLine = document.getElementById('month-select-line').value;
+
+    if (venueId && monthBar) {
+      // Update Bar Chart (Day-wise Bookings)
+      fetch(`/get_daywise_bookings/${venueId}/${monthBar}/`)
+        .then(response => response.json())
+        .then(data => {
+          const labels = Object.keys(data).map(date => formatDate(date)); // Format dates
+          const values = Object.values(data);
+
+          if (barChart) barChart.destroy();
+          barChart = new Chart(barChartCtx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Bookings',
+                data: values,
+                backgroundColor: '#43A047',
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: { beginAtZero: true }
+              }
+            }
+          });
+        });
+    }
+
+    if (venueId && monthLine) {
+      // Update Line Chart (Week-wise Revenue)
+      fetch(`/get_weekwise_revenue/${venueId}/${monthLine}/`)
+        .then(response => response.json())
+        .then(data => {
+          const labels = Object.keys(data).map(week => `Week ${week}`);
+          const values = Object.values(data);
+
+          if (lineChart) lineChart.destroy();
+          lineChart = new Chart(lineChartCtx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Revenue',
+                data: values,
+                borderColor: '#43A047',
+                fill: false,
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: { beginAtZero: true }
+              }
+            }
+          });
+        });
+    }
+  }
+
+  // Add event listeners to venue dropdown and month pickers
+  document.getElementById('venue-select').addEventListener('change', updateCharts);
+  document.getElementById('month-select-bar').addEventListener('change', updateCharts);
+  document.getElementById('month-select-line').addEventListener('change', updateCharts);
+
+  // Initialize charts with the current month and first venue by default
+  updateCharts();
+</script>
+{% endblock extra_js %}

@@ -1,0 +1,9 @@
+<select name="{{ spec.parameter_name }}" onchange="this.form.submit();">
+    <option value="">{% trans 'All' %}</option>
+    {% for choice in spec.choices %}
+        <option value="{{ choice.query_string|iriencode }}"
+            {% if choice.selected %}selected{% endif %}>
+            {{ choice.display }}
+        </option>
+    {% endfor %}
+</select>

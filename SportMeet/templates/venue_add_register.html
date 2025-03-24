@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Venue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .form-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 14px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+        .add-field-btn {
+            background-color:rgb(86, 97, 220);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .add-field-btn:hover {
+            background-color: #218838;
+        }
+        .court-request, .venue-image {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Add Venue</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="venue_owner">ID:</label>
+            <input type="text" id="venue_owner" name="venue_owner" value="{{venue_owner_profile.id}}" readonly>
+        </div>
+            <div class="form-group">
+                <label for="name">Venue Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Venue Image:</label>
+            <input type="file" id="image" name="image" required>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="area">Location:</label>
+            <input type="text" id="area" name="area" required>
+       
+        <div class="form-group">
+            <label for="googleMapsLink">Google Maps Link:</label>
+            <input type="text" id="googleMapsLink" name="google_maps_link">
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="end_date" required>
+        </div>
+        <div class="form-group">
+            <label for="startTime">Opening Hours:</label>
+            <input type="time" id="startTime" name="start_time" required>
+        </div>
+        <div class="form-group">
+            <label for="endTime">Closing Hours:</label>
+            <input type="time" id="endTime" name="end_time" required>
+        </div>
+
+        <h3>Venue Images</h3>
+        <div id="venueImages">
+            <div class="venue-image">
+                <div class="form-group">
+                    <label for="image1">Image:</label>
+                    <input type="file" id="image1" name="images" multiple>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="add-field-btn" onclick="addVenueImage()">Add Another Venue Image</button>
+
+        <h3>Court Requests</h3>
+        <div id="courtRequests">
+            <div class="court-request">
+                <div class="form-group">
+                    <label for="sport1">Sport:</label>
+                    <select id="sport1" name="sport" required>
+                        {% for sport in sports %}
+                            <option value="{{ sport.id }}">{{ sport.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="courtCount1">Court Count:</label>
+                    <input type="number" id="courtCount1" name="court_count" required>
+                </div>
+                <div class="form-group">
+                    <label for="price1">Price:</label>
+                    <input type="number" id="price1" name="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="duration1">Duration:</label>
+                    <select id="duration1" name="duration" required>
+                        <option value="30">30 Minutes</option>
+                        <option value="60">1 Hour</option>
+                        <option value="90">1 Hour 30 Minutes</option>
+                        <option value="120">2 Hours</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="add-field-btn" onclick="addCourtRequest()">Add Another Court Request</button>
+
+        <button type="submit" class="add-field-btn">Submit</button>
+    </form>
+</div>
+
+<script>
+    let courtRequestCount = 1;
+    let venueImageCount = 1;
+
+    function addCourtRequest() {
+        courtRequestCount++;
+        const newCourtRequest = document.createElement('div');
+        newCourtRequest.className = 'court-request';
+        newCourtRequest.innerHTML = `
+            <div class="form-group">
+                <label for="sport${courtRequestCount}">Sport:</label>
+                <select id="sport${courtRequestCount}" name="sport" required>
+                    {% for sport in sports %}
+                        <option value="{{ sport.id }}">{{ sport.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="courtCount${courtRequestCount}">Court Count:</label>
+                <input type="number" id="courtCount${courtRequestCount}" name="court_count" required>
+            </div>
+            <div class="form-group">
+                <label for="price${courtRequestCount}">Price:</label>
+                <input type="number" id="price${courtRequestCount}" name="price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="duration${courtRequestCount}">Duration:</label>
+                <select id="duration${courtRequestCount}" name="duration" required>
+                    <option value="30">30 Minutes</option>
+                    <option value="60">1 Hour</option>
+                    <option value="90">1 Hour 30 Minutes</option>
+                    <option value="120">2 Hours</option>
+                </select>
+            </div>
+        `;
+        document.getElementById('courtRequests').appendChild(newCourtRequest);
+    }
+
+    function addVenueImage() {
+        venueImageCount++;
+        const newVenueImage = document.createElement('div');
+        newVenueImage.className = 'venue-image';
+        newVenueImage.innerHTML = `
+            <div class="form-group">
+                <label for="image${venueImageCount}">Image:</label>
+                <input type="file" id="image${venueImageCount}" name="images" multiple>
+            </div>
+        `;
+        document.getElementById('venueImages').appendChild(newVenueImage);
+    }
+</script>
+
+</body>
+</html>

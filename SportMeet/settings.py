@@ -92,7 +92,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sai',  # Set to your database name
-        'USER': 'sai',
+        'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',  # Set to your database host
         'PORT': '5432',       # Default PostgreSQL port

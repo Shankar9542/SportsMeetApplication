@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x=o85$(^r20pz6nk@4(vgq3d9h0gjkj&djopt3(8@j(d&6^rsr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['98.80.11.169']
+ALLOWED_HOSTS = []
 SITE_ID=1
 
 
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'SportMeet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sai',  # Set to your database name
+        'NAME': 'sample',  # Set to your database name
         'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',  # Set to your database host
@@ -173,7 +173,7 @@ AUTHENTICATION_BACKENDS= (
 LOGIN_REDIRECT_URL= "/home/"
 LOGOUT_REDIRECT_URL= "/login/"
 
-LOGIN_URL = '/login/'
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -229,5 +229,8 @@ DEFAULT_FROM_EMAIL = 'mashigula@gmail.com'
 
 
 
-
-FRONTEND_URL = "http://localhost:8000" 
+PAYREXX_CONFIG = {
+    'INSTANCE_NAME': 'sportmeet',
+    'API_KEY': 'XvsYNA0bFhTpPyfGNCVLSXoWPcoHtO',
+    'ENDPOINT': 'https://sportmeet.payrexx.com/api/v1.0/Transaction/',
+}

@@ -4,6 +4,7 @@ import json
 from django.utils import timezone
 import re
 from django.urls import reverse
+from django.views import View
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, status,permissions
 from rest_framework.decorators import api_view,permission_classes
@@ -33,6 +34,7 @@ from django.contrib import messages
 from.forms import *
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Sum, Count
+from .utils.geo_utils import haversine_distance
 
 def test_booking_emails(request):
     user_email = 'avinashnukathoti357@gmail.com'
@@ -140,6 +142,7 @@ class RegisterUserView(generics.CreateAPIView):
                 'error': errors
             }, status=status.HTTP_400_BAD_REQUEST)
 
+
   
 def register_view(request):
     return render(request, "register.html")
@@ -238,15 +241,20 @@ def customer_dashboard(request):
     return redirect(reverse('admin:index'))
 
 
-def user_logout(request):
-    logout(request)
-    return redirect("SportMeetApp:home")  # Redirect to home after logout
+def logout_view(request):
+  
+    user = request.user  # Get the logged-in user
+    logout(request)  # Logout the user
+
+    # Redirect based on user type
+    if user.is_superuser:
+        return redirect('/admin/')  # Superuser -> Admin Login
+    elif user.groups.filter(name='owner').exists():  # Venue Owner
+        return redirect('/login/')  # Venue Owner -> Login Page
+    else:  # Customer
+        return redirect('/home/')
 
 
-
-def admin_logout(request):
-    logout(request)
-    return redirect("admin:login")
 
 class VenueListView(APIView):
     def get(self, request):
@@ -615,6 +623,7 @@ def get_messaged_customers(request):
 @login_required
 def booking_view(request, venue_id):
     venue = get_object_or_404(Venue, id=venue_id)
+    discount = Discount.objects.filter(venue=venue).first()
 
     # Handle selected sport (filtering courts)
     selected_sport_id = request.GET.get('sport_id')
@@ -683,7 +692,7 @@ def booking_view(request, venue_id):
 
     context = {
         'venue': venue,
-        'discount':venue.discount,
+        'discount':discount.discount if discount else 0,
         'time_slots_json': json.dumps(time_slots),
         'courts_json': json.dumps(courts_data),
         'booked_slots_json': json.dumps(booked_slots),
@@ -705,12 +714,15 @@ def booking_view(request, venue_id):
 def venue_owner_booking_view(request, venue_id=None):
     # Fetch all venues owned by the venue owner
     venues = Venue.objects.filter(owner=request.user.venue_owner_profile)
+   
     
     # If a specific venue is selected, use it; otherwise, use the first venue
     if venue_id:
         venue = get_object_or_404(Venue, id=venue_id, owner=request.user.venue_owner_profile)
     else:
         venue = venues.first()
+        
+    discount = Discount.objects.filter(venue=venue).first()
 
     # Handle selected sport (filtering courts)
     selected_sport_id = request.GET.get('sport_id')
@@ -777,7 +789,7 @@ def venue_owner_booking_view(request, venue_id=None):
 
     context = {
         'venue': venue,
-        'discount':venue.discount,
+        'discount':discount.discount if discount else 0,
         'venues': venues,  # Pass all venues to the template
         'time_slots_json': json.dumps(time_slots),
         'courts_json': json.dumps(courts_data),
@@ -996,7 +1008,8 @@ def register_venue_add(request, user_id):
         'form': form,
         'sports': sports,
         'user_id': user_id,
-        'venue_owner_profile': venue_owner_profile
+        'venue_owner_profile': venue_owner_profile,
+       
     })
 
 
@@ -1082,18 +1095,345 @@ def get_weekwise_revenue(request, venue_id, month):
     
     return JsonResponse(weekly_data)
 
-# from django.contrib.auth import views as auth_views
-# def custom_admin_login(request):
-#     """
-#     Custom admin login view that redirects to 'SportmeetApp:dashboard' after login.
-#     """
+
+
+def venue_location(request, venue_id):
+    venue = get_object_or_404(Venue, id=venue_id)
+    return render(request, "venue_location.html", {"venue": venue})
+
+@csrf_exempt
+def save_venue_location(request, venue_id):
+    if request.method == "POST":
+        venue = get_object_or_404(Venue, id=venue_id)
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
+
+        if latitude and longitude:
+            venue.latitude = latitude
+            venue.longitude = longitude
+            venue.save()
+            return JsonResponse({
+                "status": "success",
+                "latitude": latitude,
+                "longitude": longitude,
+                "message": "Location saved successfully"
+            })
+        return JsonResponse({
+            "status": "error",
+            "message": "Invalid coordinates"
+        }, status=400)
+    return JsonResponse({
+        "status": "error",
+        "message": "Invalid request method"
+    }, status=405)
+    
+
+from math import radians, sin, cos, sqrt, atan2
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate distance between two points in kilometers"""
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    return 6371 * 2 * atan2(sqrt(a), sqrt(1-a))
+
+def nearby_venues(request):
+    try:
+        user_lat = float(request.GET.get('lat'))
+        user_lng = float(request.GET.get('lng'))
+        radius_km = 5  # 5km radius
+        
+        # Get all venues with coordinates
+        venues = Venue.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+        
+        # Calculate distance for each venue and filter
+        nearby_venues = []
+        for venue in venues:
+            distance = haversine_distance(
+                user_lat, user_lng,
+                venue.latitude, venue.longitude
+            )
+            if distance <= radius_km:
+                venue.distance = round(distance, 2)
+                nearby_venues.append(venue)
+        
+        # Sort by distance
+        nearby_venues.sort(key=lambda v: v.distance)
+        
+        return render(request, 'nearby_venues.html', {
+            'venues': nearby_venues,
+            'user_location': {'lat': user_lat, 'lng': user_lng}
+        })
+    
+    except (TypeError, ValueError):
+        return render(request, 'nearby_venues.html', {
+            'error': 'Invalid coordinates provided'
+        })
+        
+def reports_dashboard(request):
+    # Get current month in YYYY-MM format
+    current_month = timezone.now().strftime('%Y-%m')
+    selected_month = request.GET.get('month', current_month)
+    venue_id = request.GET.get('venue_id')
+    
+    # Generate months for dropdown (last 12 months)
+    months = []
+    date = timezone.now()
+    for _ in range(12):
+        months.append(date.strftime('%Y-%m'))
+        # Move to previous month
+        date = (date.replace(day=1) - timedelta(days=1))
+    
+    # Get venues for filter dropdown (admin only)
+    venues = []
+    if request.user.is_superuser:
+        venues = Venue.objects.filter(owner__is_approved=True)
+    
+    # Base query for all reports
+    if request.user.is_superuser:
+        base_qs = Booking.objects.filter(date__year=selected_month[:4], 
+                                       date__month=selected_month[5:7])
+        if venue_id:
+            base_qs = base_qs.filter(venue_id=venue_id)
+    else:
+        try:
+            venue_owner = VenueOwnerProfile.objects.get(user=request.user)
+            base_qs = Booking.objects.filter(
+                venue__owner=venue_owner,
+                date__year=selected_month[:4],
+                date__month=selected_month[5:7]
+            )
+            if venue_id:
+                base_qs = base_qs.filter(venue_id=venue_id)
+        except VenueOwnerProfile.DoesNotExist:
+            base_qs = Booking.objects.none()
+    
+    # Revenue Report Data - Top 10 venues
+    revenue_data = list(base_qs.values(
+        'venue__id', 'venue__name'
+    ).annotate(
+        total_revenue=Sum('price'),
+        booking_count=Count('id')
+    ).order_by('-total_revenue')[:10])
+    
+    # Daily Popular Timeslots
+    daily_timeslots = list(base_qs.values(
+        'date', 'start_time', 'end_time', 'venue__name'
+    ).annotate(
+        booking_count=Count('id')
+    ).order_by('date', '-booking_count'))
+    
+    # Daily Popular Sports
+    daily_sports = list(base_qs.values(
+        'date', 'sport__name', 'venue__name'
+    ).annotate(
+        booking_count=Count('id')
+    ).order_by('date', '-booking_count'))
+    
+    # Process daily data to get top entries per day
+    processed_timeslots = {}
+    for entry in daily_timeslots:
+        date_str = entry['date'].strftime('%Y-%m-%d')
+        if date_str not in processed_timeslots:
+            processed_timeslots[date_str] = {
+                'date': entry['date'],
+                'timeslot': f"{entry['start_time']} - {entry['end_time']}",
+                'venue': entry['venue__name'],
+                'count': entry['booking_count']
+            }
+    
+    processed_sports = {}
+    for entry in daily_sports:
+        date_str = entry['date'].strftime('%Y-%m-%d')
+        if date_str not in processed_sports:
+            processed_sports[date_str] = {
+                'date': entry['date'],
+                'sport': entry['sport__name'],
+                'venue': entry['venue__name'],
+                'count': entry['booking_count']
+            }
+    
+    context = {
+        'months': months,
+        'venues': venues,
+        'current_month': current_month,
+        'selected_month': selected_month,
+        'selected_venue': int(venue_id) if venue_id else None,
+        'revenue_data': revenue_data,
+        'daily_timeslots': list(processed_timeslots.values()),
+        'daily_sports': list(processed_sports.values()),
+    }
+    
+    return render(request, 'dashboard_reports.html', context)
+
+# class BookingCreateAPIView(APIView):
+#     def post(self, request, *args, **kwargs):
+#         mutable_data = request.data.copy()
+#         is_venue_owner = hasattr(request.user, 'venue_owner_profile')
+
+#         # Handle customer assignment
+#         if is_venue_owner:
+#             if 'customer_name' in mutable_data and mutable_data['customer_name']:
+#                 customer_name = mutable_data['customer_name']
+#                 temp_username = customer_name.lower().replace(" ", "_")
+#                 user, created = User.objects.get_or_create(
+#                     username=temp_username,
+#                     defaults={
+#                         "first_name": customer_name.split()[0],
+#                         "last_name": " ".join(customer_name.split()[1:]) if " " in customer_name else "",
+#                     }
+#                 )
+#                 customer_profile, _ = CustomerProfile.objects.get_or_create(user=user)
+#                 mutable_data['customer'] = customer_profile.id
+#                 mutable_data['venue_owner'] = request.user.venue_owner_profile.id
+#             else:
+#                 return Response({'error': 'Customer information is required.'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             if request.user.is_authenticated:
+#                 customer_profile = CustomerProfile.objects.get_or_create(user=request.user)[0]
+#                 mutable_data['customer'] = customer_profile.id
+#             else:
+#                 return Response({'error': 'Authentication required for customers.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+#         # Validate booking data
+#         serializer = BookingSerializer(data=mutable_data)
+#         if not serializer.is_valid():
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Check for overlapping bookings
+#         try:
+#             court = Court.objects.get(id=mutable_data['court'])
+#             if Booking.objects.filter(
+#                 court=court,
+#                 date=mutable_data['date'],
+#                 start_time__lt=mutable_data['end_time'],
+#                 end_time__gt=mutable_data['start_time'],
+#                 booking_status__in=['pending', 'confirmed'],
+#             ).exists():
+#                 return Response({'error': 'This court is already booked.'}, status=status.HTTP_400_BAD_REQUEST)
+#         except Court.DoesNotExist:
+#             return Response({'error': 'Court not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Save booking with pending status
+#         booking = serializer.save(booking_status='pending')
+#         booking_data = serializer.data
+
+#         # Create transaction record
+#         transaction = Transaction.objects.create(
+#             booking=booking,
+#             amount=booking.price,
+#             currency='AUD',
+#             payment_method='payrexx' if not is_venue_owner else 'offline',
+#             payment_status='pending'
+#         )
+
+#         # For venue owners, confirm immediately
+#         if is_venue_owner:
+#             transaction.mark_as_paid(payment_method='offline')
+#             return Response(booking_data, status=status.HTTP_201_CREATED)
+
+#         # For customers, process payment
+#         params = {
+#             "amount": str(int(booking.price * 100)),
+#             "currency": "AUD",
+#             "purpose": f"Booking #{booking.booking_id}",
+#             "successRedirectUrl": request.build_absolute_uri(
+#                 reverse('booking_payment_success', kwargs={'transaction_id': str(transaction.transaction_id)})
+#             ),
+#             "failedRedirectUrl": request.build_absolute_uri(
+#                 reverse('booking_payment_failed', kwargs={'transaction_id': str(transaction.transaction_id)})
+#             ),
+#             "cancelRedirectUrl": request.build_absolute_uri(
+#                 reverse('booking_payment_canceled', kwargs={'transaction_id': str(transaction.transaction_id)})
+#             ),
+#             "referenceId": str(transaction.transaction_id),
+#             "fields": {
+#                 "forename": customer_profile.user.first_name,
+#                 "surname": customer_profile.user.last_name,
+#                 "email": customer_profile.user.email,
+#             }
+#         }
+
+#         response = requests.post(
+#             f"{settings.PAYREXX_CONFIG['ENDPOINT']}Invoice.json",
+#             auth=(settings.PAYREXX_CONFIG['INSTANCE_NAME'], settings.PAYREXX_CONFIG['API_KEY']),
+#             headers={'Content-Type': 'application/json'},
+#             data=json.dumps(params)
+#         )
+
+#         if response.status_code == 200:
+#             data = response.json()
+#             transaction.gateway_reference = data['data']['id']
+#             transaction.save()
+#             return Response({
+#                 'status': 'payment_required',
+#                 'payment_url': data['data']['link']['href'],
+#                 'booking_data': booking_data
+#             }, status=status.HTTP_200_OK)
+#         else:
+#             booking.delete()
+#             return Response({'error': 'Payment gateway error'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+# class BookingPaymentSuccessView(APIView):
+#     def get(self, request, transaction_id, *args, **kwargs):
+#         try:
+#             transaction = Transaction.objects.get(transaction_id=transaction_id)
+#             transaction.mark_as_paid(
+#                 gateway_reference=request.GET.get('transaction_id'),
+#                 payment_method='payrexx',
+#                 response_data=dict(request.GET)
+#             )
+#             return Response({'status': 'Booking confirmed'})
+#         except Transaction.DoesNotExist:
+#             return Response({'error': 'Transaction not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# class BookingPaymentFailedView(APIView):
+#     def get(self, request, transaction_id, *args, **kwargs):
+#         try:
+#             transaction = Transaction.objects.get(transaction_id=transaction_id)
+#             transaction.payment_status = 'failed'
+#             transaction.save()
+#             return Response({'status': 'Payment failed'})
+#         except Transaction.DoesNotExist:
+#             return Response({'error': 'Transaction not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# class BookingPaymentCanceledView(APIView):
+#     def get(self, request, transaction_id, *args, **kwargs):
+#         try:
+#             transaction = Transaction.objects.get(transaction_id=transaction_id)
+#             transaction.payment_status = 'canceled'
+#             transaction.save()
+#             return Response({'status': 'Payment canceled'})
+#         except Transaction.DoesNotExist:
+#             return Response({'error': 'Transaction not found'}, status=status.HTTP_404_NOT_FOUND)
+
+# @csrf_exempt
+# def payrexx_webhook(request):
 #     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         user = authenticate(request, username=username, password=password)
-#         if user is not None and user.is_staff:
-#             login(request, user)
-#             # Redirect to 'SportmeetApp:dashboard'
-#             return redirect(reverse('SportmeetApp:dashboard'))
-#     # Fallback to default admin login
-#     return redirect('admin:login')
+#         try:
+#             data = json.loads(request.body)
+#             transaction_id = data.get('referenceId')
+#             status = data.get('status')
+            
+#             if transaction_id and status:
+#                 try:
+#                     transaction = Transaction.objects.get(transaction_id=transaction_id)
+#                     if status.lower() == 'confirmed':
+#                         transaction.mark_as_paid(
+#                             gateway_reference=data.get('id'),
+#                             payment_method='payrexx',
+#                             response_data=data
+#                         )
+#                     elif status.lower() == 'failed':
+#                         transaction.payment_status = 'failed'
+#                         transaction.save()
+#                     elif status.lower() == 'canceled':
+#                         transaction.payment_status = 'canceled'
+#                         transaction.save()
+#                 except Transaction.DoesNotExist:
+#                     pass
+#         except json.JSONDecodeError:
+#             pass
+#     return HttpResponse(status=200)
+        
+        

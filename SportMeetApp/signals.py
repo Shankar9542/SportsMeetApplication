@@ -7,7 +7,7 @@ from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.contrib.auth.models import Group
-from .models import VenueOwnerProfile
+from .models import VenueOwnerProfile,CustomerProfile
 import logging
 
 User = get_user_model()
@@ -17,10 +17,15 @@ def set_google_user_active(sender, instance, **kwargs):
     if instance.provider == 'google':
         user = instance.user
         if not user.is_active:
-            user.is_active = True  # Replace 'YourGroupName' with the desired group name
-            group, _ = Group.objects.get_or_create(name='Customer')
-            user.groups.add(group)
-            user.save()
+            user.is_active = True 
+        user.is_staff = True
+        group, _ = Group.objects.get_or_create(name='customer')
+        user.groups.add(group)
+        user.save()
+            
+        if not hasattr(user, 'customer_profile'):
+            # Create a CustomerProfile for the user if it doesn't exist
+            CustomerProfile.objects.create(user=user)
     # elif instance.provider == 'facebook':
     #     user = instance.user
     #     if not user.is_active:

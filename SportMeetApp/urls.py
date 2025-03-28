@@ -16,8 +16,8 @@ urlpatterns = [
     path('registration_success/',registration_success, name='registration_success'),
     path('verify-email/<uuid:token>/', VerifyEmailView.as_view(), name='verify-email'),
     path('login/', views.user_login, name='login'),
-    path('logout/', user_logout, name='logout'),
-    path('admin-logout/', admin_logout, name='admin-logout'),
+    path('logout/', logout_view, name='logout'),
+    # path('admin-logout/', admin_logout, name='admin-logout'),
     path('approval/', views.approval_page, name='approval'),
     path('api/venues/', VenueListView.as_view(), name='venue-list'),
     path('allvenues/', VenueAllListView.as_view(), name='allvenue-list'),
@@ -59,7 +59,13 @@ urlpatterns = [
     path('get_daywise_bookings/<int:venue_id>/<str:month>/', views.get_daywise_bookings, name='get_daywise_bookings'),
     path('get_weekwise_revenue/<int:venue_id>/<str:month>/', views.get_weekwise_revenue, name='get_weekwise_revenue'),
   
-   
+ 
+ 
+    path("venue/<int:venue_id>/location/", venue_location, name="venue_location"),
+    path('venue/<int:venue_id>/save-location/', views.save_venue_location, name='save_venue_location'),
+    path('nearby-venues/', nearby_venues, name='nearby-venues'),
+    
+    path('dashboard-reports/', reports_dashboard, name='dashboard-reports'),
 ]
     
     

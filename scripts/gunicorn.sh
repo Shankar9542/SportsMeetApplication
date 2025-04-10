@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 set -e
 
-sudo cp /home/ubuntu/SPORTSAPPLICATION/gunicorn/gunicorn.socket /etc/systemd/system/
-sudo cp /home/ubuntu/SPORTSAPPLICATION/gunicorn/gunicorn.service /etc/systemd/system/
+sudo cp /home/ec2-user/SPORTSAPPLICATION/gunicorn/gunicorn.socket /etc/systemd/system/
+sudo cp /home/ec2-user/SPORTSAPPLICATION/gunicorn/gunicorn.service /etc/systemd/system/
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now gunicorn.socket

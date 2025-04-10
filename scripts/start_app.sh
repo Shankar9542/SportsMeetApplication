@@ -1,21 +1,21 @@
-#!/usr/bin/bash 
+#!/usr/bin/bash
+set -e  # Exit immediately on error
 
-sed -i 's/\[]/\["98.80.11.169"]/' /home/ubuntu/SPORTSAPPLICATION/SportMeet/settings.py
+echo "⚙️ Updating ALLOWED_HOSTS..."
+sed -i 's/\[\]/\["192.168.0.115"]/' /home/ec2-user/SPORTSAPPLICATION/SportMeet/settings.py
 
-python manage.py migrate 
-python manage.py makemigrations     
-python manage.py collectstatic
-sudo service gunicorn restart
-sudo service nginx restart
-#sudo tail -f /var/log/nginx/error.log
-#sudo systemctl reload nginx
-#sudo tail -f /var/log/nginx/error.log
-#sudo nginx -t
-#sudo systemctl restart gunicorn
-#sudo systemctl status gunicorn
-#sudo systemctl status nginx
-# Check the status
-#systemctl status gunicorn
-# Restart:
-#systemctl restart gunicorn
-#sudo systemctl status nginx
+echo "📦 Running database migrations..."
+cd /home/ec2-user/SPORTSAPPLICATION
+source /home/ec2-user/env/bin/activate
+
+python manage.py makemigrations
+python manage.py migrate
+
+echo "🗂️ Collecting static files..."
+yes | python manage.py collectstatic
+
+echo "🔁 Restarting Gunicorn and Nginx..."
+sudo systemctl restart gunicorn
+sudo systemctl restart nginx
+
+echo "✅ Deployment complete!"

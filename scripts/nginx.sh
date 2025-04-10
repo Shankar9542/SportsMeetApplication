@@ -1,24 +1,25 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-sudo systemctl daemon-reload
-sudo rm -f /etc/nginx/sites-enabled/default
+# Reload systemd in case of new service files
+sudo systemctl daemon-reexec
 
-# Copy the correct Nginx config
-sudo cp /home/ubuntu/SPORTSAPPLICATION/nginx/nginx.conf /etc/nginx/sites-available/SportMeet
+# Remove default Nginx config (if any)
+sudo rm -f /etc/nginx/conf.d/default.conf
 
-# Create a symlink to enable it
-sudo ln -s /etc/nginx/sites-available/SportMeet /etc/nginx/sites-enabled/
+# Copy your custom Nginx configuration
+sudo cp /home/ec2-user/SPORTSAPPLICATION/nginx/nginx.conf /etc/nginx/conf.d/sportmeet.conf
 
-# Add www-data to ubuntu group
-sudo gpasswd -a www-data ubuntu
+# Optional: Change permissions or ownership if needed
+# sudo chown root:root /etc/nginx/conf.d/sportmeet.conf
 
-# Test Nginx config before restarting
+# Test Nginx configuration
 sudo nginx -t
 
-# Restart Nginx if the test is successful
+# If config is valid, restart Nginx
 if [ $? -eq 0 ]; then
     sudo systemctl restart nginx
+    echo "Nginx restarted successfully."
 else
-    echo "Nginx configuration test failed. Check the config."
+    echo "❌ Nginx configuration test failed. Please fix it."
     exit 1
 fi

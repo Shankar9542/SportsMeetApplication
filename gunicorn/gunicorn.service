@@ -4,10 +4,10 @@ Requires=gunicorn.socket
 After=network.target
 
 [Service]
-User=ubuntu
+User=ec2-user
 Group=www-data
-WorkingDirectory=/home/ubuntu/SPORTSAPPLICATION
-ExecStart=/home/ubuntu/env/bin/gunicorn \
+WorkingDirectory=/home/ec2-user/SPORTSAPPLICATION
+ExecStart=/home/ec2-user/env/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \

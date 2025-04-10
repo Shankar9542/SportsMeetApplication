@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 #
-sudo rm -rf /home/ubuntu/SPORTAPPLICATION/*
+sudo rm -rf /home/ec2-user/SPORTAPPLICATION/*

@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files: 
   - source: /
-    destination: /home/ec2-user/SPORTSAPPLICATION
+    destination: /home/ec2-user/SportsMeetApplication
 
 permissions:
-  - object: /home/ec2-user/SPORTSAPPLICATION
+  - object: /home/ec2-user/SportsMeetApplication
     owner: ec2-user
     group: ec2-user
 

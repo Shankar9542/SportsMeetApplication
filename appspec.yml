@@ -41,7 +41,4 @@ hooks:
     - location: scripts/restart_gunicorn.sh
       timeout: 60
       runas: ec2-user
-    - location: scripts/start_app.sh
-      timeout: 300
-      runas: ec2-user
   

@@ -35,4 +35,4 @@ echo "Upgrading pip..."
 pip install --upgrade pip
 
 # Install dependencies
-if [ -f "/home/ec2-user/SPORTSAPPLICATION/requirements.txt" ];
+if [ -f "/home/ec2-user/SportsMeetApplication/requirements.txt" ];

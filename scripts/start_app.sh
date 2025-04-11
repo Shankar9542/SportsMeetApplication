@@ -2,10 +2,10 @@
 set -e  # Exit on any error
 
 echo "⚙️ Updating ALLOWED_HOSTS in settings.py..."
-sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \["192.168.0.115"\]/' /home/ec2-user/SPORTSAPPLICATION/SportMeet/settings.py
+sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \["192.168.0.115"\]/' /home/ec2-user/SportsMeetApplication/SportMeet/settings.py
 
 echo "📂 Changing directory to Django project..."
-cd /home/ec2-user/SPORTSAPPLICATION
+cd /home/ec2-user/SportsMeetApplication
 
 echo "📦 Activating virtual environment..."
 source /home/ec2-user/env/bin/activate

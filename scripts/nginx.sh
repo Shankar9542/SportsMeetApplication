@@ -6,12 +6,8 @@ sudo systemctl daemon-reexec
 # Remove default Nginx config (if any)
 sudo rm -f /etc/nginx/conf.d/default.conf
 
-# Ensure conf.d directory exists
-sudo mkdir -p /etc/nginx/conf.d
-
-# Copy custom server block config
+# Copy your custom server config (not full nginx.conf) to conf.d
 sudo cp /home/ec2-user/SportsMeetApplication/nginx/nginx.conf /etc/nginx/conf.d/sportsmeet.conf
-echo "✅ Copied server block to /etc/nginx/conf.d/sportsmeet.conf"
 
 # Test Nginx configuration
 sudo nginx -t

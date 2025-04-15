@@ -1,5 +1,5 @@
 ﻿APScheduler==3.10.4
-asgiref==3.8.1
+asgiref==3.7.2
 certifi==2025.1.31
 cffi==1.17.1
 channels==4.2.0

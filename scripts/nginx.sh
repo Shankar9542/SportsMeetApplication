@@ -7,7 +7,7 @@ sudo systemctl daemon-reexec
 sudo rm -f /etc/nginx/conf.d/default.conf
 
 # Copy your custom server config (not full nginx.conf) to conf.d
-sudo cp /home/ec2-user/SportsMeetApplication/nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
+sudo cp /home/ec2-user/SportsMeetApplication/nginx/nginx.conf /etc/nginx/conf.d/sportsmeet.conf
 
 # Test Nginx configuration
 sudo nginx -t

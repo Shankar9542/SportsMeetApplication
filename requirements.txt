@@ -1,11 +1,11 @@
-﻿APScheduler==3.10.4
 asgiref==3.7.2
+APScheduler==3.10.4
 certifi==2025.1.31
 cffi==1.17.1
-channels==4.2.0
+channels==3.0.6
 charset-normalizer==3.4.1
 cryptography==44.0.0
-Django==5.0.3
+Django==4.2.11
 django-admin-material-dashboard==1.0.21
 django-allauth==65.4.1
 django-apscheduler==0.7.0

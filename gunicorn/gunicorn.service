@@ -6,7 +6,7 @@ After=network.target
 User=ec2-user
 Group=nginx
 WorkingDirectory=/home/ec2-user/your-app-folder
-ExecStart=/home/ec2-user/your-venv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock wsgi:application
+ExecStart=/home/ec2-user/env/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock wsgi:application
 
 [Install]
 WantedBy=multi-user.target

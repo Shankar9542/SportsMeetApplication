@@ -10,7 +10,7 @@ WorkingDirectory=/home/ec2-user/SportsMeetApplication
 ExecStart=/home/ec2-user/env/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
-          --bind unix:/run/gunicorn.sock \
+          --bind unix:/run/gunicorn/gunicorn.sock \
           SportMeet.wsgi:application
 [Install]
 WantedBy=multi-user.target

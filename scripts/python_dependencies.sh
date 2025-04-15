@@ -35,4 +35,9 @@ echo "Upgrading pip..."
 pip install --upgrade pip
 
 # Install dependencies
-if [ -f "/home/ec2-user/SportsMeetApplication/requirements.txt" ];
+if [ -f "/home/ec2-user/SportsMeetApplication/requirements.txt" ]; then
+    echo "Installing Python dependencies from requirements.txt..."
+    pip install -r /home/ec2-user/SportsMeetApplication/requirements.txt
+else
+    echo "requirements.txt not found!"
+fi

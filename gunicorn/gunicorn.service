@@ -6,7 +6,7 @@ After=network.target
 [Service]
 User=ec2-user
 Group=www-data
-WorkingDirectory=/home/ec2-user/SPORTSAPPLICATION
+WorkingDirectory=/home/ec2-user/SportsMeetApplication
 ExecStart=/home/ec2-user/env/bin/gunicorn \
           --access-logfile - \
           --workers 3 \

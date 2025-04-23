@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User=ec2-user
 Group=nginx
-WorkingDirectory=/home/ec2-user/SportsMeetApplication
-ExecStart=/home/ec2-user/env/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock SportMeet.wsgi:application
+WorkingDirectory=/home/ec2-user/your-app-folder
+ExecStart=/home/ec2-user/env/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock wsgi:application
 
 [Install]
 WantedBy=multi-user.target

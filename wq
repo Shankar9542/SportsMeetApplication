@@ -1,0 +1,769 @@
+[33mcommit 46bb7f1d54c3875925099d8a89d33859eb9bb7c1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;33mtag: [m[1;33mv2.0[m[33m, [m[1;33mtag: [m[1;33mv1.0[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Wed Apr 16 11:49:35 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit f2d53c2b993332c2b0c06268be9b8bd8dafb6219[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Wed Apr 16 11:48:46 2025 +0530
+
+    Update start_app.sh
+
+[33mcommit 6f8ca893b933178e1940bca923b630cd63184eac[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Wed Apr 16 11:47:55 2025 +0530
+
+    Update settings.py
+
+[33mcommit 4b8ece0d721e6822d36d29699a61ffbd616ba23c[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 18:17:59 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit dd48e6cc791011876c1ab1490026071e70153437[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 18:13:06 2025 +0530
+
+    Update gunicorn.sh
+
+[33mcommit ec2dd5c5f02db518490eb9a4f00db44eeb426773[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 18:06:52 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit 96d1c68f9e89ad3ef8c3b7e4246edb08e85748b2[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 17:58:26 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit 07198af22815df13999872e6699243156e0a03cd[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 16:38:27 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit c8d9a30bd0b8516508ac2f934723fd43176f4380[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 16:12:02 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit d449c8c8500de0b99959e0b6ebd63f9779814f94[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 16:03:35 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit a7f59fe8fe95690887ca9e6a4e03c233c52c0062[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:50:14 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit 6bbb7eb4a09d3a5586a975f20b326088bd6f177e[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:38:14 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit bf9a239041ee420985a7c32cfeb97bea843207cd[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:37:44 2025 +0530
+
+    Update gunicorn.sh
+
+[33mcommit 418fb3e7cc5b03108df53b70826f945d5b8199f3[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:33:34 2025 +0530
+
+    Create deploy.sh
+
+[33mcommit d80f811dede9396ee2ae0be5c0b23670c17971f7[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:25:48 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit a2396f769de322defed31fa03f0e0c4ee61ca85f[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:06:58 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit 58760e8629bad12d4f4685abddde1a84e8098316[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 15:00:33 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit caac7c1f03ea201b46164175d5f5d10544833670[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:54:53 2025 +0530
+
+    Create sportsmeet.conf
+
+[33mcommit 9edd9a496d4234636c28ff4d7e6faf8dd60d9504[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:49:39 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit c374d2ab60d2b9371b8466a3e0c4f5945b3eeee5[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:41:00 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit be63361d1dd6599c7306f32a21fbb65b8baea1ab[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:38:24 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit 8d06c6865280cbda7b7d084aa5e4fcfb94d48aa5[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:35:57 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit 40a00cccbffd0cc38c2d080869b16b001ced8775[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:30:36 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit ac657e131fc7be8e9104c7ad5d767456ba706dab[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:29:57 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit 7bac2d80fe5196d7c488c3281f7a7970bfc696a4[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:25:45 2025 +0530
+
+    Update settings.py
+
+[33mcommit ca084343112075b4986a0e6b6869a2b234dd3027[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 14:25:02 2025 +0530
+
+    Update start_app.sh
+
+[33mcommit fde045f4056c8b8a6b0e503e560a40b305e3675a[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:40:19 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit f349a9c63f33a83ff1c4974f56708117eef345a6[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:36:54 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit b49ea1b6635fd2b46007d5f7736ec2d89af9f84c[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:32:46 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit c43fad088f3d3f1fa63a4eaa3aa8cb63a9abee51[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:25:21 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit 5a0ff01dfec2cadb02ec4a3242e7a9be5ce57cc0[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:13:27 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit 4d11e18c6dc86b90c96ec641fb510a2d3707a5bc[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:08:35 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit 0bb8e993eedcc8f7db10496e060f9c07e45baa55[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:04:55 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit 71625a9e2480bdf08a83aed4c2f0ed22f850de42[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 13:01:26 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit af1dfc091fa58477a625b243adeac0dc0927b5ac[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 12:58:13 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit f7751a7e503b3db76bdbb1016f2ee447c3ff2cfd[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 12:54:13 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit 8298d63abc4506139ee693523bd3e0d3e9f2db68[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 12:49:19 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit cce389dbbda486b055a3eaf7254c9319ae643623[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Tue Apr 15 12:44:20 2025 +0530
+
+    Update python_dependencies.sh
+
+[33mcommit 8d2ae72de30fc72e3eac207432f36984b37b98e0[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Fri Apr 11 16:56:53 2025 +0530
+
+    Update start_app.sh
+
+[33mcommit fbe58c722cbbafca686730768b553f10e7b60e0c[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Fri Apr 11 16:52:44 2025 +0530
+
+    Create stop_app.sh
+
+[33mcommit ac8b818c63c83c255a1073cedd280e39456fc478[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Fri Apr 11 16:46:59 2025 +0530
+
+    Update python_dependencies.sh
+
+[33mcommit 96909288d80630c6932bafebdb1b76fdab2bb568[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Fri Apr 11 16:25:25 2025 +0530
+
+    Update appspec.yml
+
+[33mcommit a66cfb5cb70d09d11ea7ef6d3169e79969847c21[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Fri Apr 11 16:23:39 2025 +0530
+
+    Update appspec.yml
+
+[33mcommit 3bed362546bf4340a0e3e5907d42227633c7d222[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 17:57:56 2025 +0530
+
+    Update buildspec.yml
+
+[33mcommit bae0c9252f0bb67c84db064b981c4dc884174570[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 16:47:40 2025 +0530
+
+    Delete scripts/stop_app.sh
+
+[33mcommit dc35d2d24a018e47a052e9f6b134f9a2184d0f26[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 16:30:20 2025 +0530
+
+    Update start_app.sh
+
+[33mcommit f27d53ae0b5193c61ddeb6cc28d73f6888def275[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 15:58:58 2025 +0530
+
+    Update gunicorn.sh
+
+[33mcommit db3d6bbacbd21158f8f45a8d36d5fdf9c9ed7c7c[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 14:39:03 2025 +0530
+
+    Update settings.py
+
+[33mcommit 0e6fe3fbb728d286d1bef902e386419721be2845[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 14:37:50 2025 +0530
+
+    Update gunicorn.service
+
+[33mcommit 55ab0c8428657a3a4048dc055823222c20d6ec64[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 14:36:26 2025 +0530
+
+    Update nginx.conf
+
+[33mcommit 437d0ceaaeec5165e1e76fbdb0e0022443b7c9e5[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 14:35:12 2025 +0530
+
+    Update gunicorn.sh
+
+[33mcommit c28db1aaff9b2f4fa1bd4cfdcc11e99674a33a89[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 14:33:24 2025 +0530
+
+    Update start_app.sh
+
+[33mcommit c83e1a1011df6cd7d0697fb51e1f34e280a31498[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 14:31:55 2025 +0530
+
+    Update python_dependencies.sh
+
+[33mcommit 9d1de4c8731aac36653c48fd7fc1994dd427826b[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 13:38:51 2025 +0530
+
+    Update nginx.sh
+
+[33mcommit ae5905a183ba8d1075c75f2c0c31f07360cc12a7[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 13:37:47 2025 +0530
+
+    Update instance_os_dependencies.sh
+
+[33mcommit 9feb3f6ddd475ca8cea6f77878aa6eced3726f98[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 13:36:52 2025 +0530
+
+    Delete scripts/deploy.sh
+
+[33mcommit 58d979bdcb136465b537eec1fc7976300f8cd3ef[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 13:36:18 2025 +0530
+
+    Update clean_instance.sh
+
+[33mcommit 510fe0fca857ffb55d63e5834559bd10aaebc762[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Apr 10 13:35:33 2025 +0530
+
+    Update appspec.yml
+
+[33mcommit 12a19c49f532368ceceadfd86bf74bee2117982d[m
+Author: SindhooraDevops <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 29 11:32:34 2025 +0530
+
+    nginx edited
+
+[33mcommit a2430e4a23e568b6d82a13b6b51245c6be2c1ba0[m
+Author: SindhooraDevops <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 29 11:27:10 2025 +0530
+
+    Revert "added sss"
+    
+    This reverts commit fe174712e00a4de1eef2b4e6601a2f19c8fc4924.
+
+[33mcommit fe174712e00a4de1eef2b4e6601a2f19c8fc4924[m
+Author: SindhooraDevops <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 29 11:25:28 2025 +0530
+
+    added sss
+
+[33mcommit 54476634c9c29977aeac315288f9d47ec85f90a3[m
+Author: SindhooraDevops <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 28 18:18:41 2025 +0530
+
+    changes required
+
+[33mcommit cbf3d25d3fb1a5bda4a3e6ca352d6280958edf89[m
+Author: SindhooraDevops <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 28 17:57:53 2025 +0530
+
+    folder change
+
+[33mcommit 636683719e527cc20963dda65b9de26ad190ef6f[m
+Author: SindhooraDevops <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 28 17:46:49 2025 +0530
+
+    ip change
+
+[33mcommit d552bba6c850bc1da0ff0b24aa98ce0fa81cf262[m
+Author: SindhooraDevops <bairy.sindhu@gmail.com>
+Date:   Fri Mar 28 13:34:09 2025 +0530
+
+    code changes
+
+[33mcommit f94faee306924b144d9973abf8640e19677cbc9b[m[33m ([m[1;31morigin/sports[m[33m)[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Tue Mar 25 14:46:01 2025 +0530
+
+    ip change
+
+[33mcommit 204af9c76a5f9eb3577609d6e4d0413feea7817e[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 21:05:38 2025 +0530
+
+    new code
+
+[33mcommit 9c3b35fc06ee734b7de507e0c17cd09510ba03f4[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 19:10:32 2025 +0530
+
+    changed
+
+[33mcommit cfbb1c9468096f9d534d1fc9cda9c354ec442be6[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 18:45:58 2025 +0530
+
+    Changes
+
+[33mcommit 231bea12b61768b1d730076c9e967f91cddd91e0[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 18:30:06 2025 +0530
+
+    changes
+
+[33mcommit 9fb43162e3e292c272bf37d1cda53b4547a7e6ac[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 16:22:15 2025 +0530
+
+    changes
+
+[33mcommit 242e17b14a604d3fa3582615ad5a898efae5a24a[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 15:10:45 2025 +0530
+
+    changes
+
+[33mcommit bbccec601df3c459d55afb966f28b246543ae9e8[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 14:21:42 2025 +0530
+
+    added new
+
+[33mcommit f56d429f1d3a78c8f207ffce76815da4fc456dff[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 13:12:53 2025 +0530
+
+    added changes
+
+[33mcommit 9bda9a3c73022071435259a54de05954f76beeb7[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 12:27:57 2025 +0530
+
+    changes
+
+[33mcommit 43c25ce3627bfcd86469812dc19bdcc98aaa5dc3[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Mon Mar 24 11:51:18 2025 +0530
+
+    deleted
+
+[33mcommit 71ea7cbf8bb39b5984734f090027c8af713ec2d0[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 16:16:13 2025 +0530
+
+    Added new
+
+[33mcommit f085b03fd6b6f8e40b29d5d4101824eb67fcdb85[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 16:02:47 2025 +0530
+
+    Changes files
+
+[33mcommit 95a5b720d714d9a8576183867ca2ece142ac2a9d[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 15:47:53 2025 +0530
+
+    new
+
+[33mcommit cbc76a59901cbd410827be9ac0936ba7d1dd9dc3[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 15:32:00 2025 +0530
+
+    changes
+
+[33mcommit 3382495ce797497a5ccb092580893e14202f1b3f[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 14:44:41 2025 +0530
+
+    commit changes
+
+[33mcommit 02523bde9f88fdeb2c9233a2b6f2c18b1558ad9d[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 14:01:07 2025 +0530
+
+    changes update
+
+[33mcommit 0cc234e4f32f1a338638213a56a4b27c361201ef[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 13:36:02 2025 +0530
+
+    changes
+
+[33mcommit 1fb3d395a2fed120fade468538927372404a0967[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 13:26:23 2025 +0530
+
+    change code
+
+[33mcommit 9d2f811b532b8bff5d064ca9c1a5d347f324080f[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 13:07:51 2025 +0530
+
+    changed
+
+[33mcommit 0569f5d121723a6d1e32f7d326c9f148a10783d2[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Sat Mar 22 12:48:43 2025 +0530
+
+    changed new
+
+[33mcommit 6b5855edb60e00a0200b3b393e43b9394c778b87[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 18:15:46 2025 +0530
+
+    Changes
+
+[33mcommit 2b1365aa0184898f01b6f3b36896710fc6635349[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 18:06:08 2025 +0530
+
+    Change required
+
+[33mcommit c86a9546db5c557020e112565b157d6f8cb409fb[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 17:56:35 2025 +0530
+
+    Changed
+
+[33mcommit 0df76b120b4882c94f8de512459475f010d4becf[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 17:46:37 2025 +0530
+
+    change
+
+[33mcommit 6dd3234519f4d5f2e6ccd670a5994b59d6217264[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 17:29:08 2025 +0530
+
+    Changed
+
+[33mcommit 6fad2ab6aeb8affae897d36d7288e04f5b9e25b6[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 16:56:40 2025 +0530
+
+    Socket
+
+[33mcommit f5c2dbc9f493c7e26892d93722cf22c2663d7798[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 16:06:32 2025 +0530
+
+    Changes apply
+
+[33mcommit 6c875c7e182ccaffa8fa712f5645ec7ad719518f[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 15:53:31 2025 +0530
+
+    Changed
+
+[33mcommit 69057ab010fe95999fcc13a4b28acdb4f07ee313[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 15:38:41 2025 +0530
+
+    changes apply
+
+[33mcommit 27bbd27c0c18064b4b2093d987f9941e5d9a4d2a[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 15:22:00 2025 +0530
+
+    Resolve changes
+
+[33mcommit 88e0b310e854b0be98f52f1807a303d0c83d1ae4[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 15:06:14 2025 +0530
+
+    Resolve changes
+
+[33mcommit e9ff975afec4a3891a939a0e3e3c3f0b8e078fe2[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 14:55:19 2025 +0530
+
+    Resolve changes
+
+[33mcommit df4435d8101363f6c64a82dc940d4cce505a9293[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 13:51:16 2025 +0530
+
+    Resolve erros
+
+[33mcommit 1b21143909c9de9096d296e4a879b1625223fd4e[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 13:37:11 2025 +0530
+
+    Replaced changed
+
+[33mcommit 0f118c136bd38097bb109165f3e8bcc25217e316[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 12:21:25 2025 +0530
+
+    Resolve changes
+
+[33mcommit 76c0274a40135e6b0397112431fd3e00e5eb8b4f[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 12:13:13 2025 +0530
+
+    Resolved changes
+
+[33mcommit 1ba8e5006952fb75587432f71c9b5bb4b6e3e595[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 12:02:36 2025 +0530
+
+    Resolved changes
+
+[33mcommit 57148f59899a3d22240dd10571fb21217768ea2d[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Fri Mar 21 11:58:23 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit dd612c31d3a67da5a8632a458d837f975e2df472[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 18:49:15 2025 +0530
+
+    Fixed line endings and updated files
+
+[33mcommit d950a22639ee5533d219c812736bb20e3b4487bc[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 17:57:49 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit dcc02c6f247a2d5f3437458605ee99e269efe96c[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 17:16:33 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 094757bbd409a7aed395aa1129ee7676a5bbc703[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 17:02:32 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 9628a77eaa24ada868a7dc223b4f6d5a0a713600[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 16:46:22 2025 +0530
+
+    Fix line endings for gunicorn.sh
+
+[33mcommit f4baf65afba2916fd2a545fc948d07116b9085ce[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 16:28:23 2025 +0530
+
+    Fix line endings for gunicorn.sh
+
+[33mcommit 6b4a32af4a7b05c8f0a356791e7060dea10ee3ed[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 16:16:50 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit ed3ceeb2704f95e73edc2efbb20e129eb0ef51b8[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 16:06:51 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit b65a32b2ff57d1cf55b88c19da724c5240927ee7[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 15:58:07 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit aade63a1ecb5913fd3e16b61d8a1fa7882f1d3da[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 15:48:49 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 443d2245ca496e8876688c2ddd82837b2ef9edc9[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 15:35:51 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 7654168fda16c423c3a20f395e01082c9282eea8[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 15:22:27 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 5122401ad88aa60f01f75b35d196bed8d471d760[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 15:12:19 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit d38a1250dfe0314056b45565aa21d07082510d18[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 15:04:44 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit ddaee6e03f08e7ef86a431e88eb23a6dbabed7c1[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 14:55:50 2025 +0530
+
+    Resolved changes
+
+[33mcommit 0d8e016ea53fefcc4dbd6fbd6937a1024129f13a[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 14:48:32 2025 +0530
+
+    Resolved changes
+
+[33mcommit 84548583d0bac6ea7f392ca66e5b78234bef3056[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 14:37:40 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 4d2fbc74dd7a915fe8808e63603c6621d834f76b[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 14:10:13 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit 5751a2bb9f6b7ff4ae52c45b42c5252d6148bceb[m
+Author: Shankar9542 <148524491+Shankar9542@users.noreply.github.com>
+Date:   Thu Mar 20 13:58:22 2025 +0530
+
+    Update requirements.txt
+
+[33mcommit 71d9397696a1c15bad659b8a33294be5f89dbdc0[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 13:43:21 2025 +0530
+
+    Resolved deleted
+
+[33mcommit f4b820d44588df2828730a3342c6769ef4250d1d[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 13:32:54 2025 +0530
+
+    Resolved edits
+
+[33mcommit ae8d3e0d003e4b57fe55037ddabe54d9462294d8[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 13:13:54 2025 +0530
+
+    Resolved merge
+
+[33mcommit b841acb6fcf4b7b85149e9d2a25a9333edd04ffb[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 12:40:43 2025 +0530
+
+    Resolved merge conflicts
+
+[33mcommit f118f9e34dbe3edf5683e15414d176f11d2bc348[m
+Author: Shankar9542 <shankar.chinthapally66@gmail.com>
+Date:   Thu Mar 20 12:36:48 2025 +0530
+
+    first commit

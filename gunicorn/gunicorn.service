@@ -1,16 +1,12 @@
 [Unit]
 Description=gunicorn daemon
-Requires=gunicorn.socket
 After=network.target
 
 [Service]
 User=ec2-user
-Group=www-data
-WorkingDirectory=/home/ec2-user/SPORTSAPPLICATION
-ExecStart=/home/ec2-user/env/bin/gunicorn \
-          --access-logfile - \
-          --workers 3 \
-          --bind unix:/run/gunicorn.sock \
-          SportMeet.wsgi:application
+Group=nginx
+WorkingDirectory=/home/ec2-user/your-app-folder
+ExecStart=/home/ec2-user/env/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock wsgi:application
+
 [Install]
 WantedBy=multi-user.target
